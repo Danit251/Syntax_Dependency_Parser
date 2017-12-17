@@ -1,6 +1,7 @@
 from nltk.corpus import dependency_treebank
 import numpy as np
 from copy import deepcopy
+import Node
 
 corpus_sentences = dependency_treebank.parsed_sents()
 
@@ -90,6 +91,50 @@ def perceptron(feature_size, num_iter, feature_func):
 
 def tree_score(sentence):
     return 0
+
+def mst(root, nodes):
+    num_nodes = nodes.length
+    # Each element: (node, edge)
+    best_in_edge = []
+    # Each element: edge : {edges}
+    kicks_out = {}
+    cur_edges = []
+    cur_nodes = []
+    while nodes:
+        cur_node = nodes.pop()
+        max_edge = cur_node.get_max_incoming()
+        cur_edges.append(max_edge)
+        nodes_in_cycle = is_cycle()
+        if nodes_in_cycle:
+            num_nodes += 1
+            # Updates weight of the vertexes in the cycle and update
+            # the kicks_out nodes array
+            for node in nodes_in_cycle:
+                node.update_weights()
+                for incoming_edge in node.incoming_edges:
+                    if incoming_edge != max_edge:
+                        the_edge = (incoming_edge[0], incoming_edge[1])
+                        just_max_edge = (max_edge[0], max_edge[1])
+                        if incoming_edge not in kicks_out:
+                            kicks_out[the_edge] = []
+                        kicks_out[the_edge].append(just_max_edge)
+
+            new_node = create_new_node(nodes_in_cycle, num_nodes)
+            nodes.append(new_node)
+
+
+def is_cycle():
+    pass
+
+
+def create_new_node(nodes_to_union, index):
+    incoming_edges = []
+    outgoing_edges = []
+    for node in nodes_to_union:
+        incoming_edges.extend(node.incoming_edges)
+        outgoing_edges.extend(node.outgoing_edges)
+    new_node = Node.Node("", index, incoming_edges, outgoing_edges)
+    return new_node
 
 
 def calc_tree_features(tree, sentence):
