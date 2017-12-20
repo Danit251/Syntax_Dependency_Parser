@@ -129,39 +129,47 @@ def is_cycle(edges):
     def visit(cur_edge):
         print("in visit")
         if cur_edge.in_node.id in visited:
-            return False
+            return None
         vertex = cur_edge.in_node
         visited.add(vertex.id)
         path.add(vertex.id)
         for edge in vertex.outgoing_edges:
-            if edge.out_node.id in path or visit(edge.out_node):
+            if edge.in_node.id in path or visit(edge):
                 return path
         path.remove(vertex.id)
         return None
 
     for my_edge in edges:
         print(my_edge.id)
+        path.add(my_edge.out_node.id)
         cycle_nodes = visit(my_edge)
-
-        if not cycle_nodes:
+        if cycle_nodes:
             return cycle_nodes
+        path.remove(my_edge.out_node.id)
     return None
 
 
 v1 = Node.Node("bla", 1)
 v2 = Node.Node("bla", 2)
 v3 = Node.Node("bla", 3)
+v4 = Node.Node("bla", 4)
 edge1 = Edge.Edge(11, v1, v2, 50)
 edge2 = Edge.Edge(22, v2, v1, 50)
-v1.add_incoming_edge(edge2)
+edge3 = Edge.Edge(33, v3, v1, 50)
+edge4 = Edge.Edge(44, v3, v4, 50)
 v1.add_outgoing_edge(edge1)
-v2.add_outgoing_edge(edge2)
 v2.add_incoming_edge(edge1)
+v2.add_outgoing_edge(edge2)
+v3.add_incoming_edge(edge2)
+v3.add_outgoing_edge(edge3)
+v3.add_outgoing_edge(edge4)
+v1.add_incoming_edge(edge3)
+v4.add_incoming_edge(edge4)
 # edge1.out_node = v3
 # print(v1.incoming_edges.pop().out_node.id)
 # print(v2.incoming_edges.pop().out_node.id)
-edges = [edge1, edge2]
-# print(is_cycle(edges))
+edges = [edge4, edge3, edge1, edge2]
+print(is_cycle(edges))
 
 
 def create_united_nodes(nodes_to_union, index):
