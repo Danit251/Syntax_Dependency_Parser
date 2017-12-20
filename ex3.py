@@ -1,7 +1,7 @@
 from nltk.corpus import dependency_treebank
 import numpy as np
 from copy import deepcopy
-import Node
+import Node, Edge
 
 corpus_sentences = dependency_treebank.parsed_sents()
 
@@ -92,48 +92,95 @@ def perceptron(feature_size, num_iter, feature_func):
 def tree_score(sentence):
     return 0
 
+
 def mst(root, nodes):
     num_nodes = nodes.length
     # Each element: (node, edge)
-    best_in_edge = []
+    best_in_edge = {}
     # Each element: edge : {edges}
     kicks_out = {}
     cur_edges = []
-    cur_nodes = []
-    while nodes:
+    while nodes.length > 1:
         cur_node = nodes.pop()
         max_edge = cur_node.get_max_incoming()
+        best_in_edge[cur_node.id] = max_edge.id
         cur_edges.append(max_edge)
-        nodes_in_cycle = is_cycle()
+        nodes_in_cycle = is_cycle(cur_edges)
         if nodes_in_cycle:
             num_nodes += 1
-            # Updates weight of the vertexes in the cycle and update
-            # the kicks_out nodes array
+            # Updates the kicks_out nodes array
             for node in nodes_in_cycle:
+                # Updates weight of the vertexes in the cycle and update
                 node.update_weights()
                 for incoming_edge in node.incoming_edges:
-                    if incoming_edge != max_edge:
-                        the_edge = (incoming_edge[0], incoming_edge[1])
-                        just_max_edge = (max_edge[0], max_edge[1])
-                        if incoming_edge not in kicks_out:
-                            kicks_out[the_edge] = []
-                        kicks_out[the_edge].append(just_max_edge)
+                    if incoming_edge.id != max_edge.id:
+                        if incoming_edge.id not in kicks_out:
+                            kicks_out[incoming_edge.id] = []
+                        kicks_out[incoming_edge.id].append(max_edge.id)
 
-            new_node = create_new_node(nodes_in_cycle, num_nodes)
+            new_node = create_united_nodes(nodes_in_cycle, num_nodes)
             nodes.append(new_node)
 
 
-def is_cycle():
-    pass
+def is_cycle(edges):
+    path = set()
+    visited = set()
+
+    def visit(cur_edge):
+        print("in visit")
+        if cur_edge.in_node.id in visited:
+            return False
+        vertex = cur_edge.in_node
+        visited.add(vertex.id)
+        path.add(vertex.id)
+        for edge in vertex.outgoing_edges:
+            if edge.out_node.id in path or visit(edge.out_node):
+                return path
+        path.remove(vertex.id)
+        return None
+
+    for my_edge in edges:
+        print(my_edge.id)
+        cycle_nodes = visit(my_edge)
+
+        if not cycle_nodes:
+            return cycle_nodes
+    return None
 
 
-def create_new_node(nodes_to_union, index):
-    incoming_edges = []
-    outgoing_edges = []
+v1 = Node.Node("bla", 1)
+v2 = Node.Node("bla", 2)
+v3 = Node.Node("bla", 3)
+edge1 = Edge.Edge(11, v1, v2, 50)
+edge2 = Edge.Edge(22, v2, v1, 50)
+v1.add_incoming_edge(edge2)
+v1.add_outgoing_edge(edge1)
+# v2.add_outgoing_edge(edge2)
+# v2.add_incoming_edge(edge1)
+# edge1.out_node = v3
+# print(v1.incoming_edges.pop().out_node.id)
+# print(v2.incoming_edges.pop().out_node.id)
+edges = [edge1, edge2]
+# print(is_cycle(edges))
+
+
+def create_united_nodes(nodes_to_union, index):
+    new_node = Node.Node("", index)
     for node in nodes_to_union:
-        incoming_edges.extend(node.incoming_edges)
-        outgoing_edges.extend(node.outgoing_edges)
-    new_node = Node.Node("", index, incoming_edges, outgoing_edges)
+
+        # Adds and updates all the incoming edges to the united node
+        for incoming_edge in node.incoming_edges:
+            incoming_edge.in_node = new_node
+            # Does not add edges between the united nodes
+            if incoming_edge.out_node not in nodes_to_union:
+                new_node.add_incoming_edge(incoming_edge)
+
+        # Adds and updates all the outgoing edges to the united node
+        for outgoing_edge in node.outgoing_edge:
+            outgoing_edge.in_node = new_node
+            # Does not add edges between the united nodes
+            if outgoing_edge.in_node not in nodes_to_union:
+                new_node.add_outgoing_edge(outgoing_edge)
     return new_node
 
 
@@ -145,6 +192,6 @@ def main():
     sentence = create_sentence(training_set[1])
     feature_vec = feature_function(sentence[0], sentence[1], sentence)
 
-
-if __name__ == "__main__":
-    main()
+#
+# if __name__ == "__main__":
+#     main()
