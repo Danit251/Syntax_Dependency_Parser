@@ -1,13 +1,11 @@
 
 class Node:
-    word = None
-    id = -1
-    incoming_edges = []
-    outgoing_edges = []
 
     def __init__(self, word, id):
         self.word = word
         self.id = id
+        self.incoming_edges = []
+        self.outgoing_edges = []
 
     def get_max_incoming(self):
         max_weight = -1
