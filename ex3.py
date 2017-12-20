@@ -93,17 +93,18 @@ def tree_score(sentence):
     return 0
 
 
-def mst(root, nodes):
+# Gets all the nodes of the graph(without the root) and find the MST
+def mst(nodes):
     num_nodes = nodes.length
-    # Each element: (node, edge)
-    best_in_edge = {}
-    # Each element: edge : {edges}
+    # Each element: edge.id
+    best_in_edge = []
+    # Each element: edge.id : {edges.id}
     kicks_out = {}
     cur_edges = []
-    while nodes.length > 1:
+    while nodes:
         cur_node = nodes.pop()
         max_edge = cur_node.get_max_incoming()
-        best_in_edge[cur_node.id] = max_edge.id
+        best_in_edge.append(max_edge.id)
         cur_edges.append(max_edge)
         nodes_in_cycle = is_cycle(cur_edges)
         if nodes_in_cycle:
@@ -121,13 +122,19 @@ def mst(root, nodes):
             new_node = create_united_nodes(nodes_in_cycle, num_nodes)
             nodes.append(new_node)
 
+    # Kicks the bad edges in the reverse way
+    best_in_edge.reverse()
+    for edge_id in best_in_edge:
+            for i, tzela in enumerate(best_in_edge):
+                if tzela in kicks_out[edge_id]:
+                    best_in_edge[i] = edge_id
+
 
 def is_cycle(edges):
     path = set()
     visited = set()
 
     def visit(cur_edge):
-        print("in visit")
         if cur_edge.in_node.id in visited:
             return None
         vertex = cur_edge.in_node
@@ -140,7 +147,6 @@ def is_cycle(edges):
         return None
 
     for my_edge in edges:
-        print(my_edge.id)
         path.add(my_edge.out_node.id)
         cycle_nodes = visit(my_edge)
         if cycle_nodes:
