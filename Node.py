@@ -8,8 +8,8 @@ class Node:
         self.outgoing_edges = []
 
     def get_max_incoming(self):
-        max_weight = -1
-        max_edge = None
+        max_weight = self.incoming_edges[0].weight
+        max_edge = self.incoming_edges[0]
         for edge in self.incoming_edges:
             if max_weight < edge.weight:
                 max_weight = edge.weight

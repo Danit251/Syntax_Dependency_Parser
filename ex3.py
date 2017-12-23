@@ -34,7 +34,6 @@ def find_in_sentence(sentence, value, word_or_tag=0):
     return -1
 
 
-
 # part b
 def feature_function(node1, node2, sentence):
     length = len(sentence)
@@ -95,7 +94,7 @@ def tree_score(sentence):
 
 # Gets all the nodes of the graph(without the root) and find the MST
 def mst(nodes):
-    num_nodes = nodes.length
+    num_nodes = len(nodes)
     # Each element: edge.id
     best_in_edge = []
     # Each element: edge.id : {edges.id}
@@ -106,76 +105,77 @@ def mst(nodes):
         max_edge = cur_node.get_max_incoming()
         best_in_edge.append(max_edge.id)
         cur_edges.append(max_edge)
-        nodes_in_cycle = is_cycle(cur_edges)
-        if nodes_in_cycle:
+        cycle = is_cycle(cur_edges)
+        if cycle:
+            nodes_in_cycle, edges_in_cycle = cycle
+            edges_in_cycle = set(edges_in_cycle)
             num_nodes += 1
             # Updates the kicks_out nodes array
             for node in nodes_in_cycle:
                 # Updates weight of the vertexes in the cycle and update
+                max_tzela = node.get_max_incoming()
                 node.update_weights()
                 for incoming_edge in node.incoming_edges:
-                    if incoming_edge.id != max_edge.id:
+                    if incoming_edge.id != max_tzela.id:
                         if incoming_edge.id not in kicks_out:
                             kicks_out[incoming_edge.id] = []
-                        kicks_out[incoming_edge.id].append(max_edge.id)
+                        kicks_out[incoming_edge.id].append(max_tzela.id)
 
             new_node = create_united_nodes(nodes_in_cycle, num_nodes)
             nodes.append(new_node)
+            cur_edges = [item for item in cur_edges if item not in edges_in_cycle]
 
     # Kicks the bad edges in the reverse way
     best_in_edge.reverse()
     for edge_id in best_in_edge:
+        if edge_id in kicks_out:
             for i, tzela in enumerate(best_in_edge):
                 if tzela in kicks_out[edge_id]:
                     best_in_edge[i] = edge_id
+    return set(best_in_edge)
 
 
 def is_cycle(edges):
+    path_id = set()
+    path_edges = []
     path = set()
     visited = set()
 
-    def visit(cur_edge):
+    def visit(cur_edge, all_edges):
         if cur_edge.in_node.id in visited:
             return None
+
         vertex = cur_edge.in_node
         visited.add(vertex.id)
-        path.add(vertex.id)
+        path_id.add(vertex.id)
+        path.add(vertex)
+        path_edges.append(cur_edge)
+
         for edge in vertex.outgoing_edges:
-            if edge.in_node.id in path or visit(edge):
-                return path
-        path.remove(vertex.id)
+            if edge not in all_edges:
+                continue
+            path_edges.append(edge)
+            t = visit(edge, all_edges)
+            if edge.in_node.id in path_id or t:
+                return path, path_edges
+            path_edges.remove(edge)
+
+        path_id.remove(vertex.id)
+        path.remove(vertex)
+        path_edges.remove(cur_edge)
         return None
 
     for my_edge in edges:
-        path.add(my_edge.out_node.id)
-        cycle_nodes = visit(my_edge)
-        if cycle_nodes:
-            return cycle_nodes
-        path.remove(my_edge.out_node.id)
+        # if my_edge.out_node.id == 0:
+        #     continue
+        path_id.add(my_edge.out_node.id)
+        path.add(my_edge.out_node)
+        cycle = visit(my_edge, edges)
+        if cycle:
+            return cycle
+        path_id.remove(my_edge.out_node.id)
+        path.remove(my_edge.out_node)
     return None
-
-
-v1 = Node.Node("bla", 1)
-v2 = Node.Node("bla", 2)
-v3 = Node.Node("bla", 3)
-v4 = Node.Node("bla", 4)
-edge1 = Edge.Edge(11, v1, v2, 50)
-edge2 = Edge.Edge(22, v2, v1, 50)
-edge3 = Edge.Edge(33, v3, v1, 50)
-edge4 = Edge.Edge(44, v3, v4, 50)
-v1.add_outgoing_edge(edge1)
-v2.add_incoming_edge(edge1)
-v2.add_outgoing_edge(edge2)
-v3.add_incoming_edge(edge2)
-v3.add_outgoing_edge(edge3)
-v3.add_outgoing_edge(edge4)
-v1.add_incoming_edge(edge3)
-v4.add_incoming_edge(edge4)
-# edge1.out_node = v3
-# print(v1.incoming_edges.pop().out_node.id)
-# print(v2.incoming_edges.pop().out_node.id)
-edges = [edge4, edge3, edge1, edge2]
-print(is_cycle(edges))
 
 
 def create_united_nodes(nodes_to_union, index):
@@ -186,16 +186,61 @@ def create_united_nodes(nodes_to_union, index):
         for incoming_edge in node.incoming_edges:
             incoming_edge.in_node = new_node
             # Does not add edges between the united nodes
-            if incoming_edge.out_node not in nodes_to_union:
+            if incoming_edge.out_node not in nodes_to_union and incoming_edge.out_node is not new_node:
                 new_node.add_incoming_edge(incoming_edge)
 
         # Adds and updates all the outgoing edges to the united node
-        for outgoing_edge in node.outgoing_edge:
-            outgoing_edge.in_node = new_node
+        for outgoing_edge in node.outgoing_edges:
+            outgoing_edge.out_node = new_node
             # Does not add edges between the united nodes
-            if outgoing_edge.in_node not in nodes_to_union:
+            if outgoing_edge.in_node not in nodes_to_union and incoming_edge.in_node is not new_node:
                 new_node.add_outgoing_edge(outgoing_edge)
     return new_node
+
+v1 = Node.Node("bla", 1)
+v2 = Node.Node("bla", 2)
+root = Node.Node("bla", 0)
+# v3 = Node.Node("bla", 3)
+# v4 = Node.Node("bla", 4)
+v3 = Node.Node("bla", 3)
+edge1 = Edge.Edge(11, v1, v2, 30)
+edge2 = Edge.Edge(22, v2, v1, 50)
+edge3 = Edge.Edge(33, root, v1, 100)
+edge4 = Edge.Edge(44, root, v2, 1)
+edge5 = Edge.Edge(55, v2, v3, 80)
+edge6 = Edge.Edge(66, root, v3, 80)
+edge7 = Edge.Edge(77, v3, v2, 8)
+v1.add_outgoing_edge(edge1)
+v1.add_incoming_edge(edge2)
+v2.add_incoming_edge(edge1)
+v2.add_outgoing_edge(edge2)
+v2.add_incoming_edge(edge4)
+v2.add_incoming_edge(edge7)
+v1.add_incoming_edge(edge3)
+v3.add_incoming_edge(edge5)
+v3.add_incoming_edge(edge6)
+v2.add_outgoing_edge(edge5)
+v3.add_outgoing_edge(edge7)
+root.add_outgoing_edge(edge3)
+root.add_outgoing_edge(edge4)
+root.add_outgoing_edge(edge6)
+# v3.add_incoming_edge(edge2)
+# v3.add_outgoing_edge(edge3)
+# v3.add_outgoing_edge(edge4)
+# v1.add_incoming_edge(edge3)
+# v4.add_incoming_edge(edge4)
+# edge1.out_node = v3
+# print(v1.incoming_edges.pop().out_node.id)
+# print(v2.incoming_edges.pop().out_node.id)
+# edges = [edge4, edge1, edge5, edge3, edge2, edge6, edge7]
+# edges = [edge2, edge5]
+nodes = [v3, v1, v2]
+# a, b = is_cycle(edges)
+# for i in a:
+#     print(i.id)
+# for j in b:
+#     print(j.id)
+print(mst(nodes))
 
 
 def calc_tree_features(tree, sentence):
