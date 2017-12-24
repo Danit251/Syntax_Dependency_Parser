@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d26d39e8-dbfb-4a6d-b871-450f7446f6b8" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/NLP_EX4.iml" afterPath="$PROJECT_DIR$/.idea/NLP_EX4.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ex3.py" afterPath="$PROJECT_DIR$/ex3.py" />
     </list>
     <ignored path="NLP_EX4.iws" />
@@ -13,23 +17,81 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="NLP_EX4" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
       <file leaf-file-name="ex3.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ex3.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.21442688">
-              <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+            <state relative-caret-position="25">
+              <caret line="33" column="45" lean-forward="true" selection-start-line="33" selection-start-column="45" selection-end-line="33" selection-end-column="45" />
               <folding>
-                <element signature="e#0#43#0" expanded="true" />
+                <element signature="e#370#388#0" expanded="false" />
+                <element signature="e#460#670#0" expanded="false" />
+                <element signature="e#731#840#0" expanded="false" />
+                <element signature="e#775#826#0" expanded="false" />
+                <element signature="e#870#1274#0" expanded="false" />
+                <element signature="e#898#1274#0" expanded="false" />
+                <element signature="e#946#1274#0" expanded="false" />
+                <element signature="e#1319#2032#0" expanded="false" />
+                <element signature="e#1344#1684#0" expanded="false" />
+                <element signature="e#1385#1684#0" expanded="false" />
+                <element signature="e#1472#1620#0" expanded="false" />
+                <element signature="e#1703#2032#0" expanded="false" />
+                <element signature="e#1740#2032#0" expanded="false" />
+                <element signature="e#1825#1967#0" expanded="false" />
+                <element signature="e#2091#3342#0" expanded="false" />
+                <element signature="e#2404#2504#0" expanded="false" />
+                <element signature="e#2556#2687#0" expanded="false" />
+                <element signature="e#2742#3006#0" expanded="false" />
+                <element signature="e#2940#3006#0" expanded="false" />
+                <element signature="e#3046#3318#0" expanded="false" />
+                <element signature="e#3254#3318#0" expanded="false" />
+                <element signature="e#3403#4077#0" expanded="false" />
+                <element signature="e#3599#4026#0" expanded="false" />
+                <element signature="e#3656#4026#0" expanded="false" />
+                <element signature="e#4120#5010#0" expanded="false" />
+                <element signature="e#4370#4466#0" expanded="false" />
+                <element signature="e#4518#4645#0" expanded="false" />
+                <element signature="e#4686#4833#0" expanded="false" />
+                <element signature="e#4771#4833#0" expanded="false" />
+                <element signature="e#4872#4995#0" expanded="false" />
+                <element signature="e#5045#5166#0" expanded="false" />
+                <element signature="e#5063#5100#0" expanded="false" />
+                <element signature="e#5209#6365#0" expanded="false" />
+                <element signature="e#5367#5483#0" expanded="false" />
+                <element signature="e#5586#5998#0" expanded="false" />
+                <element signature="e#5621#5992#0" expanded="false" />
+                <element signature="e#5692#5793#0" expanded="false" />
+                <element signature="e#6081#6347#0" expanded="false" />
+                <element signature="e#6457#8051#0" expanded="false" />
+                <element signature="e#6634#7742#0" expanded="false" />
+                <element signature="e#6846#7736#0" expanded="false" />
+                <element signature="e#7065#7522#0" expanded="false" />
+                <element signature="e#7290#7522#0" expanded="false" />
+                <element signature="e#7351#7522#0" expanded="false" />
+                <element signature="e#7653#7736#0" expanded="false" />
+                <element signature="e#7851#8022#0" expanded="false" />
+                <element signature="e#7888#8022#0" expanded="false" />
+                <element signature="e#7945#8022#0" expanded="false" />
+                <element signature="e#8079#9182#0" expanded="false" />
+                <element signature="e#8197#8838#0" expanded="false" />
+                <element signature="e#8470#8719#0" expanded="false" />
+                <element signature="e#8874#9166#0" expanded="false" />
+                <element signature="e#8874#8904#0" expanded="false" />
+                <element signature="e#9237#10089#0" expanded="false" />
+                <element signature="e#9310#10069#0" expanded="false" />
+                <element signature="e#9433#9695#0" expanded="false" />
+                <element signature="e#9818#10069#0" expanded="false" />
+                <element signature="e#10092#10118#0" expanded="false" />
+                <element signature="e#12779#12783#0" expanded="false" />
+                <element signature="e#12802#13157#0" expanded="false" />
+                <element signature="e#12860#12905#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -38,8 +100,8 @@
       <file leaf-file-name="Edge.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Edge.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="3" column="41" selection-start-line="3" selection-start-column="41" selection-end-line="3" selection-end-column="41" />
+            <state relative-caret-position="75">
+              <caret line="3" column="41" lean-forward="false" selection-start-line="3" selection-start-column="41" selection-end-line="3" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -48,8 +110,8 @@
       <file leaf-file-name="Node.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Node.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+            <state relative-caret-position="250">
+              <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -76,24 +138,11 @@
       </list>
     </option>
   </component>
-  <component name="NamedScopeManager">
-    <order />
-  </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-16" />
     <option name="y" value="-16" />
-    <option name="width" value="3232" />
-    <option name="height" value="1744" />
-  </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
-    <OptionsSetting value="true" id="Add" />
-    <OptionsSetting value="true" id="Remove" />
-    <OptionsSetting value="true" id="Checkout" />
-    <OptionsSetting value="true" id="Update" />
-    <OptionsSetting value="true" id="Status" />
-    <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
-    <ConfirmationsSetting value="0" id="Remove" />
+    <option name="width" value="1946" />
+    <option name="height" value="1106" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -106,54 +155,43 @@
       <autoscrollToSource />
       <autoscrollFromSource />
       <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NLP_EX4" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NLP_EX4" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NLP_EX4" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
+          <expand>
+            <path>
+              <item name="ex3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ex3" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
         </subPane>
       </pane>
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="recentsLimit" value="5" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
   </component>
   <component name="RunManager" selected="Python.ex3">
-    <configuration default="false" name="ex3" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="NLP_EX4" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ex3.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <method />
-    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -276,16 +314,32 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
-    <list size="1">
-      <item index="0" class="java.lang.String" itemvalue="Python.ex3" />
-    </list>
+    <configuration name="ex3" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="NLP_EX4" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ex3.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
     <recent_temporary>
       <list size="1">
         <item index="0" class="java.lang.String" itemvalue="Python.ex3" />
       </list>
     </recent_temporary>
   </component>
-  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -294,41 +348,48 @@
       <changelist id="d26d39e8-dbfb-4a6d-b871-450f7446f6b8" name="Default" comment="" />
       <created>1513505460949</created>
       <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
       <updated>1513505460949</updated>
     </task>
     <task id="LOCAL-00001" summary="I did part of the MST need to do the is_cycle and the create func">
       <created>1513526635721</created>
       <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
       <updated>1513526635721</updated>
     </task>
     <task id="LOCAL-00002" summary="MST partly. Without is_cycle and with problem with node class">
       <created>1513788254432</created>
       <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
       <updated>1513788254432</updated>
     </task>
     <task id="LOCAL-00003" summary="Fix Node class problem">
       <created>1513788605071</created>
       <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
       <option name="project" value="LOCAL" />
       <updated>1513788605071</updated>
     </task>
     <task id="LOCAL-00004" summary="Fix Node class problem">
       <created>1513791340893</created>
       <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
       <updated>1513791340893</updated>
     </task>
     <task id="LOCAL-00005" summary="MST done without checking">
       <created>1513802405609</created>
       <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
       <updated>1513802405609</updated>
     </task>
     <task id="LOCAL-00006" summary="MST is done">
       <created>1514045734129</created>
       <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
       <updated>1514045734129</updated>
     </task>
@@ -336,28 +397,29 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-16" y="-16" width="3232" height="1744" extended-state="6" />
+    <frame x="-11" y="-11" width="1942" height="1042" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17021276" sideWeight="0.5012698" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24468085" sideWeight="0.49873015" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4390071" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21891892" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17021276" sideWeight="0.5012698" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24369748" sideWeight="0.49873015" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32978722" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32978722" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32893157" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4390071" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32978722" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -386,44 +448,188 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/encodings/cp1255.py">
+    <entry file="file://$PROJECT_DIR$/ex3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#370#388#0" expanded="false" />
+            <element signature="e#460#670#0" expanded="false" />
+            <element signature="e#731#840#0" expanded="false" />
+            <element signature="e#775#826#0" expanded="false" />
+            <element signature="e#870#1274#0" expanded="false" />
+            <element signature="e#898#1274#0" expanded="false" />
+            <element signature="e#946#1274#0" expanded="false" />
+            <element signature="e#1319#2032#0" expanded="false" />
+            <element signature="e#1344#1684#0" expanded="false" />
+            <element signature="e#1385#1684#0" expanded="false" />
+            <element signature="e#1472#1620#0" expanded="false" />
+            <element signature="e#1703#2032#0" expanded="false" />
+            <element signature="e#1740#2032#0" expanded="false" />
+            <element signature="e#1825#1967#0" expanded="false" />
+            <element signature="e#2091#3342#0" expanded="false" />
+            <element signature="e#2404#2504#0" expanded="false" />
+            <element signature="e#2556#2687#0" expanded="false" />
+            <element signature="e#2742#3006#0" expanded="false" />
+            <element signature="e#2940#3006#0" expanded="false" />
+            <element signature="e#3046#3318#0" expanded="false" />
+            <element signature="e#3254#3318#0" expanded="false" />
+            <element signature="e#3403#4077#0" expanded="false" />
+            <element signature="e#3599#4026#0" expanded="false" />
+            <element signature="e#3656#4026#0" expanded="false" />
+            <element signature="e#4120#5010#0" expanded="false" />
+            <element signature="e#4370#4466#0" expanded="false" />
+            <element signature="e#4518#4645#0" expanded="false" />
+            <element signature="e#4686#4833#0" expanded="false" />
+            <element signature="e#4771#4833#0" expanded="false" />
+            <element signature="e#4872#4995#0" expanded="false" />
+            <element signature="e#5045#5166#0" expanded="false" />
+            <element signature="e#5063#5100#0" expanded="false" />
+            <element signature="e#5209#6365#0" expanded="false" />
+            <element signature="e#5367#5483#0" expanded="false" />
+            <element signature="e#5586#5998#0" expanded="false" />
+            <element signature="e#5621#5992#0" expanded="false" />
+            <element signature="e#5692#5793#0" expanded="false" />
+            <element signature="e#6081#6347#0" expanded="false" />
+            <element signature="e#6457#8051#0" expanded="false" />
+            <element signature="e#6634#7742#0" expanded="false" />
+            <element signature="e#6846#7736#0" expanded="false" />
+            <element signature="e#7065#7522#0" expanded="false" />
+            <element signature="e#7290#7522#0" expanded="false" />
+            <element signature="e#7351#7522#0" expanded="false" />
+            <element signature="e#7653#7736#0" expanded="false" />
+            <element signature="e#7851#8022#0" expanded="false" />
+            <element signature="e#7888#8022#0" expanded="false" />
+            <element signature="e#7945#8022#0" expanded="false" />
+            <element signature="e#8079#9182#0" expanded="false" />
+            <element signature="e#8197#8838#0" expanded="false" />
+            <element signature="e#8470#8719#0" expanded="false" />
+            <element signature="e#8874#9166#0" expanded="false" />
+            <element signature="e#8874#8904#0" expanded="false" />
+            <element signature="e#9237#10089#0" expanded="false" />
+            <element signature="e#9310#10069#0" expanded="false" />
+            <element signature="e#9433#9695#0" expanded="false" />
+            <element signature="e#9818#10069#0" expanded="false" />
+            <element signature="e#10092#10118#0" expanded="false" />
+            <element signature="e#12779#12783#0" expanded="false" />
+            <element signature="e#12802#13157#0" expanded="false" />
+            <element signature="e#12860#12905#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Edge.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="41" selection-start-line="3" selection-start-column="41" selection-end-line="3" selection-end-column="41" />
+        <state relative-caret-position="75">
+          <caret line="3" column="41" lean-forward="false" selection-start-line="3" selection-start-column="41" selection-end-line="3" selection-end-column="41" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Node.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+        <state relative-caret-position="250">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/encodings/cp1255.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Edge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="3" column="41" lean-forward="false" selection-start-line="3" selection-start-column="41" selection-end-line="3" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ex3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.21442688">
-          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+        <state relative-caret-position="25">
+          <caret line="33" column="45" lean-forward="true" selection-start-line="33" selection-start-column="45" selection-end-line="33" selection-end-column="45" />
           <folding>
-            <element signature="e#0#43#0" expanded="true" />
+            <element signature="e#370#388#0" expanded="false" />
+            <element signature="e#460#670#0" expanded="false" />
+            <element signature="e#731#840#0" expanded="false" />
+            <element signature="e#775#826#0" expanded="false" />
+            <element signature="e#870#1274#0" expanded="false" />
+            <element signature="e#898#1274#0" expanded="false" />
+            <element signature="e#946#1274#0" expanded="false" />
+            <element signature="e#1319#2032#0" expanded="false" />
+            <element signature="e#1344#1684#0" expanded="false" />
+            <element signature="e#1385#1684#0" expanded="false" />
+            <element signature="e#1472#1620#0" expanded="false" />
+            <element signature="e#1703#2032#0" expanded="false" />
+            <element signature="e#1740#2032#0" expanded="false" />
+            <element signature="e#1825#1967#0" expanded="false" />
+            <element signature="e#2091#3342#0" expanded="false" />
+            <element signature="e#2404#2504#0" expanded="false" />
+            <element signature="e#2556#2687#0" expanded="false" />
+            <element signature="e#2742#3006#0" expanded="false" />
+            <element signature="e#2940#3006#0" expanded="false" />
+            <element signature="e#3046#3318#0" expanded="false" />
+            <element signature="e#3254#3318#0" expanded="false" />
+            <element signature="e#3403#4077#0" expanded="false" />
+            <element signature="e#3599#4026#0" expanded="false" />
+            <element signature="e#3656#4026#0" expanded="false" />
+            <element signature="e#4120#5010#0" expanded="false" />
+            <element signature="e#4370#4466#0" expanded="false" />
+            <element signature="e#4518#4645#0" expanded="false" />
+            <element signature="e#4686#4833#0" expanded="false" />
+            <element signature="e#4771#4833#0" expanded="false" />
+            <element signature="e#4872#4995#0" expanded="false" />
+            <element signature="e#5045#5166#0" expanded="false" />
+            <element signature="e#5063#5100#0" expanded="false" />
+            <element signature="e#5209#6365#0" expanded="false" />
+            <element signature="e#5367#5483#0" expanded="false" />
+            <element signature="e#5586#5998#0" expanded="false" />
+            <element signature="e#5621#5992#0" expanded="false" />
+            <element signature="e#5692#5793#0" expanded="false" />
+            <element signature="e#6081#6347#0" expanded="false" />
+            <element signature="e#6457#8051#0" expanded="false" />
+            <element signature="e#6634#7742#0" expanded="false" />
+            <element signature="e#6846#7736#0" expanded="false" />
+            <element signature="e#7065#7522#0" expanded="false" />
+            <element signature="e#7290#7522#0" expanded="false" />
+            <element signature="e#7351#7522#0" expanded="false" />
+            <element signature="e#7653#7736#0" expanded="false" />
+            <element signature="e#7851#8022#0" expanded="false" />
+            <element signature="e#7888#8022#0" expanded="false" />
+            <element signature="e#7945#8022#0" expanded="false" />
+            <element signature="e#8079#9182#0" expanded="false" />
+            <element signature="e#8197#8838#0" expanded="false" />
+            <element signature="e#8470#8719#0" expanded="false" />
+            <element signature="e#8874#9166#0" expanded="false" />
+            <element signature="e#8874#8904#0" expanded="false" />
+            <element signature="e#9237#10089#0" expanded="false" />
+            <element signature="e#9310#10069#0" expanded="false" />
+            <element signature="e#9433#9695#0" expanded="false" />
+            <element signature="e#9818#10069#0" expanded="false" />
+            <element signature="e#10092#10118#0" expanded="false" />
+            <element signature="e#12779#12783#0" expanded="false" />
+            <element signature="e#12802#13157#0" expanded="false" />
+            <element signature="e#12860#12905#0" expanded="false" />
           </folding>
         </state>
       </provider>

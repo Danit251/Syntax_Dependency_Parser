@@ -40,7 +40,7 @@ def find_in_sentence(sentence, value, word_or_tag=0):
 
 def set_dicts(corpus):
     for tree in corpus:
-        for i in range(1, len(tree.nodes)):
+        for i in range(0, len(tree.nodes)):
             word = tree.nodes[i]["word"]
             tag = tree.nodes[i]["tag"]
             deps = tree.nodes[i]["deps"]
@@ -52,20 +52,26 @@ def set_dicts(corpus):
 
 
 def define_weights(word, deps, tree):
-    for dep_num in deps['']:
-        dep = tree.nodes[dep_num]["word"]
-        if word in words_deps:
-            if dep in words_deps[word]:
-                words_deps[word][dep] += 1
-            else:
-                words_deps[word][dep] = 1
-        elif word:
-            words_deps[word] = {dep: 1}
-        else:
+    if word is None:
+        for dep_num in deps['ROOT']:
+            dep = tree.nodes[dep_num]["word"]
             if 'ROOT' in words_deps:
-                words_deps['ROOT'][dep] += 1
+                if dep in words_deps['ROOT']:
+                    words_deps['ROOT'][dep] += 1
+                else:
+                    words_deps['ROOT'][dep] = 1
             else:
                 words_deps['ROOT'] = {dep: 1}
+    else:
+        for dep_num in deps['']:
+            dep = tree.nodes[dep_num]["word"]
+            if word in words_deps:
+                if dep in words_deps[word]:
+                    words_deps[word][dep] += 1
+                else:
+                    words_deps[word][dep] = 1
+            else:
+                words_deps[word] = {dep: 1}
 
 
 # part b
@@ -83,9 +89,9 @@ def feature_function(node1, node2, sentence):
         feature_vec[word_feature_ind] = 1
 
     if tag1_ind != -1 and tag2_ind != -1:
-        tag_feature_ind = len(words_dict)** 2 + tag1_ind * len(tags_dict) + tag2_ind
+        tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(
+            tags_dict) + tag2_ind
         feature_vec[tag_feature_ind] = 1
-
 
     # part e:
     if word_feature_ind != -1:
@@ -142,7 +148,8 @@ def calc_score(node1, node2, teta):
         sum += teta[word_feature_ind]
 
     if tag1_ind != -1 and tag2_ind != -1:
-        tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(tags_dict) + tag2_ind
+        tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(
+            tags_dict) + tag2_ind
         sum += teta[tag_feature_ind]
 
     if word_feature_ind != -1:
@@ -153,13 +160,18 @@ def calc_score(node1, node2, teta):
                 sum += teta[-2]
     if tag_feature_ind != -1:
         if tag2_ind - tag1_ind == 1:
-                sum += teta[-3]
+            sum += teta[-3]
         elif tag1_ind - tag2_ind == 1:
-                sum += teta[-4]
+            sum += teta[-4]
     return sum
 
 
-def tree_score(sentence):
+def tree_score(tree, teta):
+    sum_score = 0
+    # for i in range(1, len(tree.nodes)):
+    #
+    #     for j in range(1, len(tree.nodes)):
+
     return 0
 
 
@@ -307,53 +319,53 @@ def create_united_nodes(nodes_to_union, index):
     return new_node
 
 
-v1 = Node.Node("bla", 1)
-v2 = Node.Node("bla", 2)
-root = Node.Node("bla", 0)
+# v1 = Node.Node("bla", 1)
+# v2 = Node.Node("bla", 2)
+# root = Node.Node("bla", 0)
+# # v3 = Node.Node("bla", 3)
+# # v4 = Node.Node("bla", 4)
 # v3 = Node.Node("bla", 3)
 # v4 = Node.Node("bla", 4)
-v3 = Node.Node("bla", 3)
-v4 = Node.Node("bla", 4)
-# v3 = Node.Node("bla", 3)
-edge1 = Edge.Edge(11, v1, v2, 30)
-edge2 = Edge.Edge(22, v2, v1, 500)
-edge3 = Edge.Edge(33, root, v1, 100)
-edge4 = Edge.Edge(44, root, v2, 1000)
-edge5 = Edge.Edge(55, v2, v3, 80)
-edge6 = Edge.Edge(66, root, v3, 800)
-edge7 = Edge.Edge(77, v3, v2, 8)
-v1.add_outgoing_edge(edge1)
-v1.add_incoming_edge(edge2)
-v2.add_incoming_edge(edge1)
-v2.add_outgoing_edge(edge2)
-v2.add_incoming_edge(edge4)
-v2.add_incoming_edge(edge7)
-v1.add_incoming_edge(edge3)
-v3.add_incoming_edge(edge5)
-v3.add_incoming_edge(edge6)
-v2.add_outgoing_edge(edge5)
-v3.add_outgoing_edge(edge7)
-root.add_outgoing_edge(edge3)
-root.add_outgoing_edge(edge4)
-root.add_outgoing_edge(edge6)
-# v3.add_incoming_edge(edge2)
-# v3.add_outgoing_edge(edge3)
-# v3.add_outgoing_edge(edge4)
+# # v3 = Node.Node("bla", 3)
+# edge1 = Edge.Edge(11, v1, v2, 30)
+# edge2 = Edge.Edge(22, v2, v1, 500)
+# edge3 = Edge.Edge(33, root, v1, 100)
+# edge4 = Edge.Edge(44, root, v2, 1000)
+# edge5 = Edge.Edge(55, v2, v3, 80)
+# edge6 = Edge.Edge(66, root, v3, 800)
+# edge7 = Edge.Edge(77, v3, v2, 8)
+# v1.add_outgoing_edge(edge1)
+# v1.add_incoming_edge(edge2)
+# v2.add_incoming_edge(edge1)
+# v2.add_outgoing_edge(edge2)
+# v2.add_incoming_edge(edge4)
+# v2.add_incoming_edge(edge7)
 # v1.add_incoming_edge(edge3)
-# v4.add_incoming_edge(edge4)
-# edge1.out_node = v3
-# print(v1.incoming_edges.pop().out_node.id)
-# print(v2.incoming_edges.pop().out_node.id)
-# edges = [edge4, edge1, edge5, edge3, edge2, edge6, edge7]
-# edges = [edge2, edge5]
-nodes = [v3, v1, v2]
-# a, b = is_cycle(edges)
-# for i in a:
-#     print(i.id)
-# for j in b:
-#     print(j.id)
-# print(mst(nodes))
-print(training_set[0])
+# v3.add_incoming_edge(edge5)
+# v3.add_incoming_edge(edge6)
+# v2.add_outgoing_edge(edge5)
+# v3.add_outgoing_edge(edge7)
+# root.add_outgoing_edge(edge3)
+# root.add_outgoing_edge(edge4)
+# root.add_outgoing_edge(edge6)
+# # v3.add_incoming_edge(edge2)
+# # v3.add_outgoing_edge(edge3)
+# # v3.add_outgoing_edge(edge4)
+# # v1.add_incoming_edge(edge3)
+# # v4.add_incoming_edge(edge4)
+# # edge1.out_node = v3
+# # print(v1.incoming_edges.pop().out_node.id)
+# # print(v2.incoming_edges.pop().out_node.id)
+# # edges = [edge4, edge1, edge5, edge3, edge2, edge6, edge7]
+# # edges = [edge2, edge5]
+# nodes = [v3, v1, v2]
+# # a, b = is_cycle(edges)
+# # for i in a:
+# #     print(i.id)
+# # for j in b:
+# #     print(j.id)
+# # print(mst(nodes))
+# print(training_set[0])
 
 # edge1 = Edge.Edge(11, v1, v2, 30)
 # edge2 = Edge.Edge(22, v2, v1, 50)
@@ -401,7 +413,7 @@ def calc_tree_features(tree, sentence):
 
 def main():
     set_dicts(training_set)
-
+    print(words_deps['ROOT'])
     # sentence = create_sentence(training_set[0])
     # print(sentence)
     # print(training_set[0])
