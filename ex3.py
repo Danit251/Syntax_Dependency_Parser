@@ -23,7 +23,7 @@ def create_sentence(tree):
     sentence = []
 
     # for ROOT
-    sentence.append(("ROOT", "ROOT"))
+    # sentence.append(("ROOT", "ROOT"))
 
     for i in range(1, len(tree.nodes)):
         sentence.append((tree.nodes[i]["word"], tree.nodes[i]["tag"]))
@@ -177,6 +177,7 @@ def tree_score(tree, teta):
 
 def build_tree_from_sent(sentence):
     nodes = []
+    edges = {}
     root_node = Node.Node("", 0)
     index_node = 1
     index_edge = 1
@@ -192,10 +193,13 @@ def build_tree_from_sent(sentence):
     for fst_node in nodes:
         for scd_node in nodes:
             weight = 0
+            if fst_node.id == scd_node.id:
+                continue
             if fst_node.word in words_deps:
                 if scd_node.word in words_deps[fst_node.word]:
                     weight = words_deps[fst_node.word][scd_node.word]
             new_edge = Edge.Edge(index_edge, fst_node, scd_node, weight)
+            edges[new_edge.id] = new_edge
             fst_node.add_outgoing_edge(new_edge)
             scd_node.add_incoming_edge(new_edge)
             index_edge += 1
@@ -206,14 +210,16 @@ def build_tree_from_sent(sentence):
         if kodkod.word in words_deps["ROOT"]:
             weight = words_deps["ROOT"][kodkod.word]
         new_edge = Edge.Edge(index_edge, root_node, kodkod, weight)
+        edges[new_edge.id] = new_edge
         root_node.add_outgoing_edge(new_edge)
         kodkod.add_incoming_edge(new_edge)
+        index_edge += 1
 
-    return nodes
+    return nodes, edges
 
 
 # Gets all the nodes of the graph(without the root) and find the MST
-def mst(nodes):
+def mst(nodes, edges):
     num_nodes = len(nodes)
     # Each element: edge.id
     best_in_edge = []
@@ -253,7 +259,10 @@ def mst(nodes):
             for i, tzela in enumerate(best_in_edge):
                 if tzela in kicks_out[edge_id]:
                     best_in_edge[i] = edge_id
-    return set(best_in_edge)
+    all_weights = 0
+    for best_edge in best_in_edge:
+        all_weights += edges[best_edge].origin_weight
+    return all_weights
 
 
 def is_cycle(edges):
@@ -319,136 +328,18 @@ def create_united_nodes(nodes_to_union, index):
     return new_node
 
 
-# v1 = Node.Node("bla", 1)
-# v2 = Node.Node("bla", 2)
-# root = Node.Node("bla", 0)
-# # v3 = Node.Node("bla", 3)
-# # v4 = Node.Node("bla", 4)
-# v3 = Node.Node("bla", 3)
-# v4 = Node.Node("bla", 4)
-# # v3 = Node.Node("bla", 3)
-# edge1 = Edge.Edge(11, v1, v2, 30)
-# edge2 = Edge.Edge(22, v2, v1, 500)
-# edge3 = Edge.Edge(33, root, v1, 100)
-# edge4 = Edge.Edge(44, root, v2, 1000)
-# edge5 = Edge.Edge(55, v2, v3, 80)
-# edge6 = Edge.Edge(66, root, v3, 800)
-# edge7 = Edge.Edge(77, v3, v2, 8)
-# v1.add_outgoing_edge(edge1)
-# v1.add_incoming_edge(edge2)
-# v2.add_incoming_edge(edge1)
-# v2.add_outgoing_edge(edge2)
-# v2.add_incoming_edge(edge4)
-# v2.add_incoming_edge(edge7)
-# v1.add_incoming_edge(edge3)
-<<<<<<< HEAD
-# v4.add_incoming_edge(edge4)
-# edge1.out_node = v3
-# print(v1.incoming_edges.pop().out_node.id)
-# print(v2.incoming_edges.pop().out_node.id)
-# edges = [edge4, edge1, edge5, edge3, edge2, edge6, edge7]
-# edges = [edge2, edge5]
-nodes = [v3, v1, v2]
-# a, b = is_cycle(edges)
-# for i in a:
-#     print(i.id)
-# for j in b:
-#     print(j.id)
-# print(mst(nodes))
-=======
-# v3.add_incoming_edge(edge5)
-# v3.add_incoming_edge(edge6)
-# v2.add_outgoing_edge(edge5)
-# v3.add_outgoing_edge(edge7)
-# root.add_outgoing_edge(edge3)
-# root.add_outgoing_edge(edge4)
-# root.add_outgoing_edge(edge6)
-# # v3.add_incoming_edge(edge2)
-# # v3.add_outgoing_edge(edge3)
-# # v3.add_outgoing_edge(edge4)
-# # v1.add_incoming_edge(edge3)
-# # v4.add_incoming_edge(edge4)
-# # edge1.out_node = v3
-# # print(v1.incoming_edges.pop().out_node.id)
-# # print(v2.incoming_edges.pop().out_node.id)
-# # edges = [edge4, edge1, edge5, edge3, edge2, edge6, edge7]
-# # edges = [edge2, edge5]
-# nodes = [v3, v1, v2]
-# # a, b = is_cycle(edges)
-# # for i in a:
-# #     print(i.id)
-# # for j in b:
-# #     print(j.id)
-# # print(mst(nodes))
->>>>>>> 4e37897f670ad3ce95b903e881fa663c79d3c110
-# print(training_set[0])
-
-# edge1 = Edge.Edge(11, v1, v2, 30)
-# edge2 = Edge.Edge(22, v2, v1, 50)
-# edge3 = Edge.Edge(33, root, v1, 100)
-# edge4 = Edge.Edge(44, root, v2, 1)
-# edge5 = Edge.Edge(55, v2, v3, 80)
-# edge6 = Edge.Edge(66, root, v3, 80)
-# edge7 = Edge.Edge(77, v3, v2, 8)
-# v1.add_outgoing_edge(edge1)
-# v1.add_incoming_edge(edge2)
-# v2.add_incoming_edge(edge1)
-# v2.add_outgoing_edge(edge2)
-# v2.add_incoming_edge(edge4)
-# v2.add_incoming_edge(edge7)
-# v1.add_incoming_edge(edge3)
-# v3.add_incoming_edge(edge5)
-# v3.add_incoming_edge(edge6)
-# v2.add_outgoing_edge(edge5)
-# v3.add_outgoing_edge(edge7)
-# root.add_outgoing_edge(edge3)
-# root.add_outgoing_edge(edge4)
-# root.add_outgoing_edge(edge6)
-# # v3.add_incoming_edge(edge2)
-# # v3.add_outgoing_edge(edge3)
-# # v3.add_outgoing_edge(edge4)
-# # v1.add_incoming_edge(edge3)
-# # v4.add_incoming_edge(edge4)
-# # edge1.out_node = v3
-# # print(v1.incoming_edges.pop().out_node.id)
-# # print(v2.incoming_edges.pop().out_node.id)
-# # edges = [edge4, edge1, edge5, edge3, edge2, edge6, edge7]
-# # edges = [edge2, edge5]
-# nodes = [v3, v1, v2]
-# # a, b = is_cycle(edges)
-# # for i in a:
-# #     print(i.id)
-# # for j in b:
-# #     print(j.id)
-# print(mst(nodes))
-
-
 def calc_tree_features(tree, sentence):
     pass
 
 
 def main():
     set_dicts(training_set)
-<<<<<<< HEAD
-    sen = create_sentence(training_set[0])
-    print(training_set[0])
-    print(sen)
-    print(words_deps)
-    print(words_deps["ROOT"])
-    # build_tree_from_sent(sen)
-
-=======
-    print(words_deps['ROOT'])
->>>>>>> 4e37897f670ad3ce95b903e881fa663c79d3c110
-    # sentence = create_sentence(training_set[0])
-    # print(sentence)
-    # print(training_set[0])
-    # define_scores({training_set[0]})
-    # print(words_deps)
-    # feature_vec = feature_function(sentence[0], sentence[1], sentence)
-    # dict = Score.words_to_tags(training_set)
-    # print(dict)
-
+    sen = create_sentence(training_set[7])
+    sen1 = create_sentence(training_set[0])
+    g, e = build_tree_from_sent(sen)
+    g1, e1 = build_tree_from_sent(sen1)
+    print(mst(g, e))
+    print(mst(g1, e1))
 
 if __name__ == "__main__":
     main()
