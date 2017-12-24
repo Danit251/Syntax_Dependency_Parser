@@ -1,7 +1,7 @@
 from nltk.corpus import dependency_treebank
 import numpy as np
 from copy import deepcopy
-import Node, Edge, Score
+import Node, Edge
 
 corpus_sentences = dependency_treebank.parsed_sents()
 
@@ -12,6 +12,9 @@ test_set = corpus_sentences[training_size:]
 NUM_ITER = 2
 
 words_deps = {}
+words_dict = {}
+tags_dict = {}
+
 
 # Helper functions
 
@@ -35,50 +38,70 @@ def find_in_sentence(sentence, value, word_or_tag=0):
     return -1
 
 
-# score
-def define_scores(corpus):
+def set_dicts(corpus):
     for tree in corpus:
         for i in range(1, len(tree.nodes)):
             word = tree.nodes[i]["word"]
-            # deps =
             tag = tree.nodes[i]["tag"]
-            if word in word_to_tags:
-                word_to_tags[word][tag] += 1
+            deps = tree.nodes[i]["deps"]
+            define_weights(word, deps, tree)
+            if word not in words_dict:
+                words_dict[word] = len(words_dict)
+            if tag not in tags_dict:
+                tags_dict[tag] = len(tags_dict)
+
+
+def define_weights(word, deps, tree):
+    for dep_num in deps['']:
+        dep = tree.nodes[dep_num]["word"]
+        if word in words_deps:
+            if dep in words_deps[word]:
+                words_deps[word][dep] += 1
             else:
-                if word != None:
-                    word_to_tags[word] = {tag:1}
-                else if
-    return word_to_tags
+                words_deps[word][dep] = 1
+        elif word:
+            words_deps[word] = {dep: 1}
+        else:
+            if 'ROOT' in words_deps:
+                words_deps['ROOT'][dep] += 1
+            else:
+                words_deps['ROOT'] = {dep: 1}
 
 
 # part b
 def feature_function(node1, node2, sentence):
-    length = len(sentence)
+    word1_ind = words_dict[node1[0]]
+    word2_ind = words_dict[node2[0]]
+    tag1_ind = tags_dict[node1[1]]
+    tag2_ind = tags_dict[node2[1]]
 
-    word1_ind = find_in_sentence(sentence, node1[0])
-    word2_ind = find_in_sentence(sentence, node2[0])
-    tag1_ind = find_in_sentence(sentence, node1[1], word_or_tag=1)
-    tag2_ind = find_in_sentence(sentence, node2[1], word_or_tag=1)
-
-    feature_vec = np.zeros(length ** 2 + length ** 2 + 4)
+    feature_vec = np.zeros(len(words_dict) ** 2 + len(tags_dict) ** 2 + 4)
     word_feature_ind = tag_feature_ind = -1
 
     if word2_ind != -1 and word1_ind != -1:
-        word_feature_ind = word1_ind * length + word2_ind
+        word_feature_ind = word1_ind * len(words_dict) + word2_ind
         feature_vec[word_feature_ind] = 1
 
     if tag1_ind != -1 and tag2_ind != -1:
-        tag_feature_ind = length ** 2 + tag1_ind * length + tag2_ind
+        tag_feature_ind = len(words_dict)** 2 + tag1_ind * len(tags_dict) + tag2_ind
         feature_vec[tag_feature_ind] = 1
 
-    # part d:
+
+    # part e:
     if word_feature_ind != -1:
+        word1_ind = find_in_sentence(sentence, node1)
+        word2_ind = find_in_sentence(sentence, node2)
+
         if word2_ind - word1_ind == 1:
             feature_vec[-1] = 1
         else:
             if word1_ind - word2_ind == 1:
                 feature_vec[-2] = 1
+
     if tag_feature_ind != -1:
+        tag1_ind = find_in_sentence(sentence, node1, False)
+        tag2_ind = find_in_sentence(sentence, node2, False)
+
         if tag2_ind - tag1_ind == 1:
             feature_vec[-3] = 1
         else:
@@ -103,6 +126,37 @@ def perceptron(feature_size, num_iter, feature_func):
                              calc_tree_features(tree, sentence) \
                              - calc_tree_features(tree_result, sentence)
     return np.sum(teta) / (num_iter * corpus_size)
+
+
+def calc_score(node1, node2, teta):
+    word1_ind = words_dict[node1[0]]
+    word2_ind = words_dict[node2[0]]
+    tag1_ind = tags_dict[node1[1]]
+    tag2_ind = tags_dict[node2[1]]
+
+    sum = 0
+    word_feature_ind = tag_feature_ind = -1
+
+    if word2_ind != -1 and word1_ind != -1:
+        word_feature_ind = word1_ind * len(words_dict) + word2_ind
+        sum += teta[word_feature_ind]
+
+    if tag1_ind != -1 and tag2_ind != -1:
+        tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(tags_dict) + tag2_ind
+        sum += teta[tag_feature_ind]
+
+    if word_feature_ind != -1:
+        if word2_ind - word1_ind == 1:
+            sum += teta[-1]
+        else:
+            if word1_ind - word2_ind == 1:
+                sum += teta[-2]
+    if tag_feature_ind != -1:
+        if tag2_ind - tag1_ind == 1:
+                sum += teta[-3]
+        elif tag1_ind - tag2_ind == 1:
+                sum += teta[-4]
+    return sum
 
 
 def tree_score(sentence):
@@ -267,10 +321,13 @@ def calc_tree_features(tree, sentence):
 
 
 def main():
-    print(training_set[0])
+    set_dicts(training_set)
+
     # sentence = create_sentence(training_set[0])
-    # word_to_tags = define_scores({training_set[0]})
-    # print(word_to_tags)
+    # print(sentence)
+    # print(training_set[0])
+    # define_scores({training_set[0]})
+    # print(words_deps)
     # feature_vec = feature_function(sentence[0], sentence[1], sentence)
     # dict = Score.words_to_tags(training_set)
     # print(dict)
