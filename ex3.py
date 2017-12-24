@@ -1,7 +1,7 @@
 from nltk.corpus import dependency_treebank
 import numpy as np
 from copy import deepcopy
-import Node, Edge, Score
+import Node, Edge
 
 corpus_sentences = dependency_treebank.parsed_sents()
 
@@ -107,6 +107,43 @@ def perceptron(feature_size, num_iter, feature_func):
 
 def tree_score(sentence):
     return 0
+
+
+def build_tree_from_sent(sentence):
+    nodes = []
+    root_node = Node.Node("", 0)
+    index_node = 1
+    index_edge = 1
+
+    # Creates all the nodes of the graph
+    for pair in sentence:
+        word = pair[0]
+        new_node = Node.Node(word, index_node)
+        nodes.append(new_node)
+        index_node += 1
+
+    # Creates all the edges of all the nodes except the root node
+    for fst_node in nodes:
+        for scd_node in nodes:
+            weight = 0
+            if fst_node.word in words_deps:
+                if scd_node.word in words_deps[fst_node]:
+                    weight = words_deps[fst_node][scd_node]
+            new_edge = Edge.Edge(index_edge, fst_node, scd_node, weight)
+            fst_node.add_outgoing_edge(new_edge)
+            scd_node.add_incoming_edge(new_edge)
+            index_edge += 1
+
+    # Creates all the outgoing edges of the root node
+    for kodkod in nodes:
+        weight = 0
+        if kodkod.word in words_deps["ROOT"]:
+            weight = words_deps["ROOT"][kodkod.word]
+        new_edge = Edge.Edge(index_edge, root_node, kodkod, weight)
+        root_node.add_outgoing_edge(new_edge)
+        kodkod.add_incoming_edge(new_edge)
+
+    return nodes
 
 
 # Gets all the nodes of the graph(without the root) and find the MST
