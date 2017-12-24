@@ -33,7 +33,6 @@ def find_in_sentence(sentence, value, word_or_tag=0):
     return -1
 
 
-
 # part b
 def feature_function(node1, node2, sentence):
     length = len(sentence)
