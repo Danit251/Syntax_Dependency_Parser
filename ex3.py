@@ -1,7 +1,7 @@
 from nltk.corpus import dependency_treebank
 import numpy as np
 from copy import deepcopy
-import Node, Edge
+import Node, Edge, Score
 
 corpus_sentences = dependency_treebank.parsed_sents()
 
@@ -11,6 +11,7 @@ test_set = corpus_sentences[training_size:]
 
 NUM_ITER = 2
 
+words_deps = {}
 
 # Helper functions
 
@@ -32,6 +33,22 @@ def find_in_sentence(sentence, value, word_or_tag=0):
         if node[word_or_tag] == value:
             return i
     return -1
+
+
+# score
+def define_scores(corpus):
+    for tree in corpus:
+        for i in range(1, len(tree.nodes)):
+            word = tree.nodes[i]["word"]
+            # deps =
+            tag = tree.nodes[i]["tag"]
+            if word in word_to_tags:
+                word_to_tags[word][tag] += 1
+            else:
+                if word != None:
+                    word_to_tags[word] = {tag:1}
+                else if
+    return word_to_tags
 
 
 # part b
@@ -56,10 +73,10 @@ def feature_function(node1, node2, sentence):
 
     # part d:
     if word_feature_ind != -1:
-        if word2_ind-word1_ind == 1:
+        if word2_ind - word1_ind == 1:
             feature_vec[-1] = 1
         else:
-            if word1_ind-word2_ind ==1:
+            if word1_ind - word2_ind == 1:
                 feature_vec[-2] = 1
     if tag_feature_ind != -1:
         if tag2_ind - tag1_ind == 1:
@@ -123,7 +140,8 @@ def mst(nodes):
 
             new_node = create_united_nodes(nodes_in_cycle, num_nodes)
             nodes.append(new_node)
-            cur_edges = [item for item in cur_edges if item not in edges_in_cycle]
+            cur_edges = [item for item in cur_edges if
+                         item not in edges_in_cycle]
 
     # Kicks the bad edges in the reverse way
     best_in_edge.reverse()
@@ -197,12 +215,15 @@ def create_united_nodes(nodes_to_union, index):
                 new_node.add_outgoing_edge(outgoing_edge)
     return new_node
 
+
 v1 = Node.Node("bla", 1)
 v2 = Node.Node("bla", 2)
 root = Node.Node("bla", 0)
 # v3 = Node.Node("bla", 3)
 # v4 = Node.Node("bla", 4)
 v3 = Node.Node("bla", 3)
+v4 = Node.Node("bla", 4)
+# v3 = Node.Node("bla", 3)
 edge1 = Edge.Edge(11, v1, v2, 30)
 edge2 = Edge.Edge(22, v2, v1, 500)
 edge3 = Edge.Edge(33, root, v1, 100)
@@ -243,14 +264,59 @@ nodes = [v3, v1, v2]
 # print(mst(nodes))
 print(training_set[0])
 
+# edge1 = Edge.Edge(11, v1, v2, 30)
+# edge2 = Edge.Edge(22, v2, v1, 50)
+# edge3 = Edge.Edge(33, root, v1, 100)
+# edge4 = Edge.Edge(44, root, v2, 1)
+# edge5 = Edge.Edge(55, v2, v3, 80)
+# edge6 = Edge.Edge(66, root, v3, 80)
+# edge7 = Edge.Edge(77, v3, v2, 8)
+# v1.add_outgoing_edge(edge1)
+# v1.add_incoming_edge(edge2)
+# v2.add_incoming_edge(edge1)
+# v2.add_outgoing_edge(edge2)
+# v2.add_incoming_edge(edge4)
+# v2.add_incoming_edge(edge7)
+# v1.add_incoming_edge(edge3)
+# v3.add_incoming_edge(edge5)
+# v3.add_incoming_edge(edge6)
+# v2.add_outgoing_edge(edge5)
+# v3.add_outgoing_edge(edge7)
+# root.add_outgoing_edge(edge3)
+# root.add_outgoing_edge(edge4)
+# root.add_outgoing_edge(edge6)
+# # v3.add_incoming_edge(edge2)
+# # v3.add_outgoing_edge(edge3)
+# # v3.add_outgoing_edge(edge4)
+# # v1.add_incoming_edge(edge3)
+# # v4.add_incoming_edge(edge4)
+# # edge1.out_node = v3
+# # print(v1.incoming_edges.pop().out_node.id)
+# # print(v2.incoming_edges.pop().out_node.id)
+# # edges = [edge4, edge1, edge5, edge3, edge2, edge6, edge7]
+# # edges = [edge2, edge5]
+# nodes = [v3, v1, v2]
+# # a, b = is_cycle(edges)
+# # for i in a:
+# #     print(i.id)
+# # for j in b:
+# #     print(j.id)
+# print(mst(nodes))
+
+
 def calc_tree_features(tree, sentence):
     pass
 
 
 def main():
-    sentence = create_sentence(training_set[1])
-    feature_vec = feature_function(sentence[0], sentence[1], sentence)
+    print(training_set[0])
+    # sentence = create_sentence(training_set[0])
+    # word_to_tags = define_scores({training_set[0]})
+    # print(word_to_tags)
+    # feature_vec = feature_function(sentence[0], sentence[1], sentence)
+    # dict = Score.words_to_tags(training_set)
+    # print(dict)
 
-#
-# if __name__ == "__main__":
-#     main()
+
+if __name__ == "__main__":
+    main()
