@@ -181,8 +181,8 @@ def build_tree_from_sent(sentence):
         for scd_node in nodes:
             weight = 0
             if fst_node.word in words_deps:
-                if scd_node.word in words_deps[fst_node]:
-                    weight = words_deps[fst_node][scd_node]
+                if scd_node.word in words_deps[fst_node.word]:
+                    weight = words_deps[fst_node.word][scd_node.word]
             new_edge = Edge.Edge(index_edge, fst_node, scd_node, weight)
             fst_node.add_outgoing_edge(new_edge)
             scd_node.add_incoming_edge(new_edge)
@@ -353,7 +353,7 @@ nodes = [v3, v1, v2]
 # for j in b:
 #     print(j.id)
 # print(mst(nodes))
-print(training_set[0])
+# print(training_set[0])
 
 # edge1 = Edge.Edge(11, v1, v2, 30)
 # edge2 = Edge.Edge(22, v2, v1, 50)
@@ -401,6 +401,12 @@ def calc_tree_features(tree, sentence):
 
 def main():
     set_dicts(training_set)
+    sen = create_sentence(training_set[0])
+    print(training_set[0])
+    print(sen)
+    print(words_deps)
+    print(words_deps["ROOT"])
+    # build_tree_from_sent(sen)
 
     # sentence = create_sentence(training_set[0])
     # print(sentence)
