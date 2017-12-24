@@ -204,11 +204,11 @@ root = Node.Node("bla", 0)
 # v4 = Node.Node("bla", 4)
 v3 = Node.Node("bla", 3)
 edge1 = Edge.Edge(11, v1, v2, 30)
-edge2 = Edge.Edge(22, v2, v1, 50)
+edge2 = Edge.Edge(22, v2, v1, 500)
 edge3 = Edge.Edge(33, root, v1, 100)
-edge4 = Edge.Edge(44, root, v2, 1)
+edge4 = Edge.Edge(44, root, v2, 1000)
 edge5 = Edge.Edge(55, v2, v3, 80)
-edge6 = Edge.Edge(66, root, v3, 80)
+edge6 = Edge.Edge(66, root, v3, 800)
 edge7 = Edge.Edge(77, v3, v2, 8)
 v1.add_outgoing_edge(edge1)
 v1.add_incoming_edge(edge2)
@@ -240,8 +240,8 @@ nodes = [v3, v1, v2]
 #     print(i.id)
 # for j in b:
 #     print(j.id)
-print(mst(nodes))
-
+# print(mst(nodes))
+print(training_set[0])
 
 def calc_tree_features(tree, sentence):
     pass
