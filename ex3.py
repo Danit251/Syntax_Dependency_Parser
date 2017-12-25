@@ -1,6 +1,6 @@
 from nltk.corpus import dependency_treebank
 import numpy as np
-from scipy.sparse import dok_matrix
+from scipy.sparse import dok_matrix, csr_matrix
 from copy import deepcopy
 import Node, Edge
 
@@ -18,9 +18,7 @@ tags_dict = {}
 feature_vec_size = 0
 
 
-# Helper functions
-
-# for word - enter 0, for tag- enter 1
+# --------------------------- helper Functions --------------------------------
 def create_sentence(tree):
     sentence = []
 
@@ -34,12 +32,15 @@ def create_sentence(tree):
 
 
 def find_in_sentence(sentence, value, word_or_tag=0):
+    options = []
     for i, node in enumerate(sentence):
         if node[word_or_tag] == value:
-            return i
-    return -1
+            options.append(i)
+            # return i
+    return options
 
 
+# --------------------------- prepare data ------------------------------------
 def set_dicts(corpus):
     global words_dict
     global tags_dict
@@ -80,49 +81,56 @@ def define_weights(word, deps, tree):
                 words_deps[word] = {dep: 1}
 
 
-# part b
+# ----------------------------- part b ----------------------------------------
+# todo change to tree instead of sentence
 def feature_function(node1, node2, sentence):
-    word1_ind = words_dict[node1[0]]
-    word2_ind = words_dict[node2[0]]
-    tag1_ind = tags_dict[node1[1]]
-    tag2_ind = tags_dict[node2[1]]
+    word1_ind = words_dict[node1['word']]
+    word2_ind = words_dict[node2['word']]
+    tag1_ind = tags_dict[node1['tag']]
+    tag2_ind = tags_dict[node2['tag']]
 
-    feature_vec = np.zeros(len(words_dict) ** 2 + len(tags_dict) ** 2 + 4)
+    # feature_vec = np.zeros(len(words_dict) ** 2 + len(tags_dict) ** 2 + 4)
+    feature_vec = dok_matrix(
+        (len(words_dict) ** 2 + len(tags_dict) ** 2 + 4, 1))
     word_feature_ind = tag_feature_ind = -1
 
     if word2_ind != -1 and word1_ind != -1:
         word_feature_ind = word1_ind * len(words_dict) + word2_ind
-        feature_vec[word_feature_ind] = 1
+        feature_vec[word_feature_ind, 0] = 1
 
     if tag1_ind != -1 and tag2_ind != -1:
         tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(
             tags_dict) + tag2_ind
-        feature_vec[tag_feature_ind] = 1
+        feature_vec[tag_feature_ind, 0] = 1
 
     # part e:
     if word_feature_ind != -1:
-        word1_ind = find_in_sentence(sentence, node1)
-        word2_ind = find_in_sentence(sentence, node2)
-
-        if word2_ind - word1_ind == 1:
-            feature_vec[-1] = 1
-        else:
-            if word1_ind - word2_ind == 1:
-                feature_vec[-2] = 1
+        feature_vec = features_orders(feature_vec, sentence, node1, node2,
+                                    'word', 0)
+        # word1_ind = find_in_sentence(sentence, node1['word'])
+        # if word1_ind < len(sentence) - 1:
+        #     if sentence[word1_ind + 1, 0] == node2['word']:
+        #         feature_vec[-1, 0] = 1
+        # elif word1_ind > 0:
+        #     if sentence[word1_ind - 1, 0] == node2['word']:
+        #         feature_vec[-2, 0] = 1
 
     if tag_feature_ind != -1:
-        tag1_ind = find_in_sentence(sentence, node1, False)
-        tag2_ind = find_in_sentence(sentence, node2, False)
-
-        if tag2_ind - tag1_ind == 1:
-            feature_vec[-3] = 1
-        else:
-            if tag1_ind - tag2_ind == 1:
-                feature_vec[-4] = 1
+        feature_vec = features_orders(feature_vec, sentence, node1, node2,
+                                      'tag', 1)
+    #     tag1_ind = find_in_sentence(sentence, node1['tag'], 1)
+    #     if tag1_ind < len(sentence) - 1:
+    #         if sentence[tag1_ind + 1, 1] == node2['tag']:
+    #             feature_vec[-3, 0] = 1
+    #             print("in")
+    #     elif tag1_ind > 0:
+    #         if sentence[tag1_ind - 1, 1] == node2['tag']:
+    #             feature_vec[-4, 0] = 1
 
     return feature_vec
 
 
+# ----------------------------- part c ----------------------------------------
 def perceptron(feature_size, num_iter, feature_func):
     teta = np.zeros(feature_size)
     shuffled_training = deepcopy(training_set)
@@ -140,52 +148,40 @@ def perceptron(feature_size, num_iter, feature_func):
     return np.sum(teta) / (num_iter * corpus_size)
 
 
-def calc_score(node1, node2, teta):
-    word1_ind = words_dict[node1["word"]]
-    word2_ind = words_dict[node2["word"]]
-    tag1_ind = tags_dict[node1["tag"]]
-    tag2_ind = tags_dict[node2["tag"]]
-
-    sum = 0
-    word_feature_ind = tag_feature_ind = -1
-
-    # todo fix teta be zero
-    if word2_ind != -1 and word1_ind != -1:
-        word_feature_ind = word1_ind * len(words_dict) + word2_ind
-        sum += teta[word_feature_ind]
-
-    if tag1_ind != -1 and tag2_ind != -1:
-        tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(
-            tags_dict) + tag2_ind
-        sum += teta[tag_feature_ind]
-
-    # todo fix
-    # if word_feature_ind != -1:
-    #     if word2_ind - word1_ind == 1:
-    #         sum += teta[-1]
-    #     else:
-    #         if word1_ind - word2_ind == 1:
-    #             sum += teta[-2]
-    # if tag_feature_ind != -1:
-    #     if tag2_ind - tag1_ind == 1:
-    #         sum += teta[-3]
-    #     elif tag1_ind - tag2_ind == 1:
-    #         sum += teta[-4]
-    print(sum)
-    return sum
+def calc_score(node1, node2, teta, sentence):
+    vec = feature_function(node1, node2, sentence)
+    current_score = 0
+    for item in vec.items():
+        current_score += teta[item[0]]
+    return current_score
 
 
 def tree_score(tree, teta):
     sum_score = 0
-    print(sum_score)
+    # todo remove (update e with tree instead of sentence)
+    sentence = create_sentence(tree)
     for i in range(1, len(tree.nodes)):
         for j in range(1, len(tree.nodes)):
-            sum_score += calc_score(tree.nodes[i], tree.nodes[j], teta)
+            sum_score += calc_score(tree.nodes[i], tree.nodes[j], teta,
+                                    sentence)
             print(sum_score)
         sum_score += calc_score({"word": 'ROOT', "tag": 'ROOT'}, tree.nodes[i],
-                                teta)
-    print(sum_score)
+                                teta, sentence)
     return sum_score
+
+
+# ----------------------------- part e ----------------------------------------
+def features_orders(feature_vec, sentence, node1, node2, word_or_tag, ind):
+    ind_options = find_in_sentence(sentence, node1[word_or_tag],
+                                         word_or_tag=ind)
+    for word1_ind in ind_options:
+        if word1_ind < len(sentence) - 1:
+            if sentence[word1_ind + 1, ind] == node2[word_or_tag]:
+                feature_vec[-1-2*ind, 0] = 1
+        elif word1_ind > 0:
+            if sentence[word1_ind - 1, ind] == node2[word_or_tag]:
+                feature_vec[-2-2*ind, 0] = 1
+    return feature_vec
 
 
 def build_tree_from_sent(sentence):
@@ -343,42 +339,3 @@ def create_united_nodes(nodes_to_union, index):
 
 def calc_tree_features(tree, sentence):
     pass
-
-
-def main():
-    set_dicts(training_set)
-<<<<<<< HEAD
-    global feature_vec_size
-    feature_vec_size = len(words_dict) ** 2 + len(tags_dict) ** 2 + 4
-    teta = dok_matrix((feature_vec_size, 1), dtype=np.float32)
-    print(tree_score(training_set[0], teta))
-
-    # global feature_vec_size
-    # feature_vec_size = len(words_dict)
-    # size = feature_vec_size
-    # print(size)
-    # + len(tags_dict) ** 2 + 4
-    # print(feature_vec_size)
-    # size = 12669974
-    # teta = np.zeros(feature_vec_size)
-    # print(teta)
-    # sentence = create_sentence(training_set[0])
-    # print(sentence)
-    # print(training_set[0])
-    # define_scores({training_set[0]})
-    # print(words_deps)
-    # feature_vec = feature_function(sentence[0], sentence[1], sentence)
-    # dict = Score.words_to_tags(training_set)
-    # print(dict)
-
-=======
-    sen = create_sentence(training_set[7])
-    sen1 = create_sentence(training_set[0])
-    g, e = build_tree_from_sent(sen)
-    g1, e1 = build_tree_from_sent(sen1)
-    print(mst(g, e))
-    print(mst(g1, e1))
->>>>>>> a8ae2b43c692b478a44e9d3fef91cd409704043a
-
-if __name__ == "__main__":
-    main()
