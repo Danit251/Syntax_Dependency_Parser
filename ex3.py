@@ -359,9 +359,14 @@ def features_orders(feature_vec, sentence, word1, word2, ind):
 def main():
     set_dicts(training_set)
     feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2 + 4
+    teta = dok_matrix((feature_size, 1))
+
+    # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)
     print(res)
 
+    # evaluation:
+    test(teta)
 
 if __name__ == '__main__':
     main()
