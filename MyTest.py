@@ -55,6 +55,7 @@ def test_c():
 def main():
     ex3.set_dicts(training_set)
     feature_size = len(ex3.words_dict) ** 2 + len(ex3.tags_dict) ** 2 + 4
+    # test_b_and_e()
 
 
 

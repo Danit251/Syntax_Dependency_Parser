@@ -244,6 +244,26 @@ def is_cycle(edges):
     return None
 
 
+def create_united_nodes(nodes_to_union, index):
+    new_node = Node.Node("", index, "")
+    for node in nodes_to_union:
+
+        # Adds and updates all the incoming edges to the united node
+        for incoming_edge in node.incoming_edges:
+            incoming_edge.in_node = new_node
+            # Does not add edges between the united nodes
+            if incoming_edge.out_node not in nodes_to_union and incoming_edge.out_node is not new_node:
+                new_node.add_incoming_edge(incoming_edge)
+
+        # Adds and updates all the outgoing edges to the united node
+        for outgoing_edge in node.outgoing_edges:
+            outgoing_edge.out_node = new_node
+            # Does not add edges between the united nodes
+            if outgoing_edge.in_node not in nodes_to_union and incoming_edge.in_node is not new_node:
+                new_node.add_outgoing_edge(outgoing_edge)
+    return new_node
+
+
 def calc_score(node1, node2, teta, sentence):
     vec = feature_function(node1, node2, sentence)
     current_score = 0
@@ -266,10 +286,14 @@ def perceptron(feature_size, num_iter):
             sentence = create_sentence(tree)
             mst_edges = calc_tree(curr_teta, sentence)
             right_edges = calc_right_tree(tree)
-            curr_teta += sum_features_edges(right_edges, sentence) - \
-                         sum_features_edges(mst_edges, sentence)
+            curr_teta += sum_features_edges(right_edges, sentence, feature_size) - \
+                         sum_features_edges(mst_edges, sentence, feature_size)
             arr_teta.append(curr_teta)
+            print("in")
+    #         todo delete:
+            break
 
+    print("in")
     return np.sum(arr_teta) / (num_iter * corpus_size)
 
 
@@ -322,13 +346,8 @@ def sum_features_edges(edges_set, sentence, feature_size):
         print(" ")
     return edges_sum
 
-# ----------------------------- part d ----------------------------------------
 
-<<<<<<< HEAD
-# ----------------------------- part e ----------------------------------------
-def features_orders(feature_vec, sentence, word1, word2, ind):
-    ind_options = find_in_sentence(sentence, word1,
-=======
+# ----------------------------- part d ----------------------------------------
 
 def test(teta):
     num_edges = 0
@@ -341,53 +360,42 @@ def test(teta):
 
         for right_edge in right_edges:
             for mst_edge in mst_edges:
-                if (right_edge.out_node == mst_edge.out_node) and (right_edge.in_node == mst_edge.in_node):
+                if (right_edge.out_node == mst_edge.out_node) and (
+                    right_edge.in_node == mst_edge.in_node):
                     num_right_edges += 1
                     mst_edges.remove(mst_edge)
                     break
 
-    return num_right_edges/num_edges
+    return num_right_edges / num_edges
+
 
 # ----------------------------- part e ----------------------------------------
 
-
-def features_orders(feature_vec, sentence, node1, node2, word_or_tag, ind):
-    if word_or_tag == 'word':
-        value1 = node1.word
-        value2 = node1.word
-    else:
-        value1 = node1.tag
-        value2 = node2.tag
-    ind_options = find_in_sentence(sentence, value1,
->>>>>>> b8ff89d48da1c957422d82cc4e649ae3b4cdacda
-                                   word_or_tag=ind)
+def features_orders(feature_vec, sentence, word1, word2, ind):
+    ind_options = find_in_sentence(sentence, word1, word_or_tag=ind)
     for word1_ind in ind_options:
-        if word1_ind < len(sentence) - 1 and sentence[word1_ind + 1, ind] == word2:
-                feature_vec[-4] = 1
-        elif word1_ind < len(sentence) - 2 and sentence[word1_ind + 2, ind] == word2:
-                feature_vec[-3] = 1
-        elif word1_ind < len(sentence) - 3 and sentence[word1_ind + 3, ind] == word2:
-                feature_vec[-2] = 1
-        elif word1_ind < len(sentence) - 4 and sentence[word1_ind + 4, ind] == word2:
-                feature_vec[-1] = 1
+        if word1_ind < len(sentence) - 1 and sentence[
+                    word1_ind + 1, ind] == word2:
+            feature_vec[-4] = 1
+        elif word1_ind < len(sentence) - 2 and sentence[
+                    word1_ind + 2, ind] == word2:
+            feature_vec[-3] = 1
+        elif word1_ind < len(sentence) - 3 and sentence[
+                    word1_ind + 3, ind] == word2:
+            feature_vec[-2] = 1
+        elif word1_ind < len(sentence) - 4 and sentence[
+                    word1_ind + 4, ind] == word2:
+            feature_vec[-1] = 1
     return feature_vec
 
 
-def create_united_nodes(nodes_to_union, index):
-    new_node = Node.Node("", index)
-    for node in nodes_to_union:
+# ------------------------------ Main -----------------------------------------
 
-        # Adds and updates all the incoming edges to the united node
-        for incoming_edge in node.incoming_edges:
-            incoming_edge.in_node = new_node
-            # Does not add edges between the united nodes
-            if incoming_edge.out_node not in nodes_to_union and incoming_edge.out_node is not new_node:
-                new_node.add_incoming_edge(incoming_edge)
+def main():
+    set_dicts(training_set)
+    feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2 + 4
+    res = perceptron(feature_size, num_iter=NUM_ITER)
+    print(res)
 
-        # Adds and updates all the outgoing edges to the united node
-        for outgoing_edge in node.outgoing_edges:
-            outgoing_edge.out_node = new_node
-            # Does not add edges between the united nodes
-            if outgoing_edge.in_node not in nodes_to_union and incoming_edge.in_node is not new_node:
-                new_node.add_outgoing_edge(outgoing_edge)
-    return new_node
+if __name__ == '__main__':
+    main()
