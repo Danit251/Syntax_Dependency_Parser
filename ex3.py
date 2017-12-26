@@ -326,9 +326,30 @@ def sum_features_edges(edges_set, sentence, feature_size):
         print(" ")
     return edges_sum
 
+# ----------------------------- part d ----------------------------------------
 
+
+def test(teta):
+    num_edges = 0
+    num_right_edges = 0
+    for tree in test_set:
+        sentence = create_sentence(tree)
+        mst_edges = calc_tree(teta, sentence)
+        right_edges = calc_right_tree(tree)
+        num_edges += len(right_edges)
+
+        for right_edge in right_edges:
+            for mst_edge in mst_edges:
+                if (right_edge.out_node == mst_edge.out_node) and (right_edge.in_node == mst_edge.in_node):
+                    num_right_edges += 1
+                    mst_edges.remove(mst_edge)
+                    break
+
+    return num_right_edges/num_edges
 
 # ----------------------------- part e ----------------------------------------
+
+
 def features_orders(feature_vec, sentence, node1, node2, word_or_tag, ind):
     if word_or_tag == 'word':
         value1 = node1.word
