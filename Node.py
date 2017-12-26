@@ -1,9 +1,10 @@
 
 class Node:
 
-    def __init__(self, word, id):
+    def __init__(self, word, id, tag):
         self.word = word
         self.id = id
+        self.tag = tag
         self.incoming_edges = []
         self.outgoing_edges = []
 

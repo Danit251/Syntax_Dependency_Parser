@@ -50,8 +50,8 @@ def set_dicts(corpus):
         for i in range(0, len(tree.nodes)):
             word = tree.nodes[i]["word"]
             tag = tree.nodes[i]["tag"]
-            deps = tree.nodes[i]["deps"]
-            define_weights(word, deps, tree)
+            # deps = tree.nodes[i]["deps"]
+            # define_weights(word, deps, tree)
             if word not in words_dict and word is not None:
                 words_dict[word] = len(words_dict)
             if tag not in tags_dict and tag is not None:
@@ -84,10 +84,10 @@ def define_weights(word, deps, tree):
 # ----------------------------- part b ----------------------------------------
 # todo change to tree instead of sentence
 def feature_function(node1, node2, sentence):
-    word1_ind = words_dict[node1['word']]
-    word2_ind = words_dict[node2['word']]
-    tag1_ind = tags_dict[node1['tag']]
-    tag2_ind = tags_dict[node2['tag']]
+    word1_ind = words_dict[node1.word]
+    word2_ind = words_dict[node2.word]
+    tag1_ind = tags_dict[node1.tag]
+    tag2_ind = tags_dict[node2.tag]
 
     # feature_vec = np.zeros(len(words_dict) ** 2 + len(tags_dict) ** 2 + 4)
     feature_vec = dok_matrix(
@@ -156,6 +156,34 @@ def calc_score(node1, node2, teta, sentence):
     return current_score
 
 
+def calc_right_tree(tree):
+    edges_set = set()
+    edge_ind = 0
+    for i in tree.nodes:
+        word = tree.nodes[i]["word"]
+        tag = tree.nodes[i]["tag"]
+        deps = tree.nodes[i]["deps"]
+        node1 = Node.Node(word, i, tag)
+        if word is None:
+            for dep_num in deps['ROOT']:
+                dep_word = tree.nodes[dep_num]["word"]
+                dep_tag = tree.nodes[dep_num]["tag"]
+                node2 = Node.Node(dep_word, dep_num, dep_tag)
+                curr_edge = Edge.Edge(edge_ind, node1, node2, 0)
+                edges_set.add(curr_edge)
+                edge_ind += 1
+        else:
+            for dep_num in deps['']:
+                dep_word = tree.nodes[dep_num]["word"]
+                dep_tag = tree.nodes[dep_num]["tag"]
+                node2 = Node.Node(dep_word, dep_num, dep_tag)
+                curr_edge = Edge.Edge(edge_ind, node1, node2, 0)
+                edges_set.add(curr_edge)
+                edge_ind += 1
+
+    return edges_set
+
+
 def tree_score(tree, teta):
     sum_score = 0
     # todo remove (update e with tree instead of sentence)
@@ -164,7 +192,7 @@ def tree_score(tree, teta):
         for j in range(1, len(tree.nodes)):
             sum_score += calc_score(tree.nodes[i], tree.nodes[j], teta,
                                     sentence)
-            print(sum_score)
+            # print(sum_score)
         sum_score += calc_score({"word": 'ROOT', "tag": 'ROOT'}, tree.nodes[i],
                                 teta, sentence)
     return sum_score

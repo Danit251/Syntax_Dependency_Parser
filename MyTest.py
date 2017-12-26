@@ -21,8 +21,10 @@ def test_b():
 def test_c():
     teta = dok_matrix(
         (len(ex3.words_dict) ** 2 + len(ex3.tags_dict) ** 2 + 4, 1))
+    print("teta", teta)
     tree_score = ex3.tree_score(training_set[0], teta)
     print(tree_score)
+
 
 def main():
     ex3.set_dicts(training_set)
