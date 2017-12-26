@@ -212,29 +212,28 @@ def features_orders(feature_vec, sentence, node1, node2, word_or_tag, ind):
     return feature_vec
 
 
-def build_tree_from_sent(sentence):
+def build_tree_from_sent(teta, sentence):
     nodes = []
     edges = {}
-    root_node = Node.Node("", 0)
+    root_node = Node.Node("ROOT", 0, "ROOT")
     index_node = 1
     index_edge = 1
 
     # Creates all the nodes of the graph
     for pair in sentence:
         word = pair[0]
-        new_node = Node.Node(word, index_node)
+        tag = pair[1]
+        new_node = Node.Node(word, index_node, tag)
         nodes.append(new_node)
         index_node += 1
 
     # Creates all the edges of all the nodes except the root node
     for fst_node in nodes:
         for scd_node in nodes:
-            weight = 0
             if fst_node.id == scd_node.id:
                 continue
-            if fst_node.word in words_deps:
-                if scd_node.word in words_deps[fst_node.word]:
-                    weight = words_deps[fst_node.word][scd_node.word]
+
+            weight = calc_score(fst_node, scd_node, teta, sentence)
             new_edge = Edge.Edge(index_edge, fst_node, scd_node, weight)
             edges[new_edge.id] = new_edge
             fst_node.add_outgoing_edge(new_edge)
@@ -243,9 +242,7 @@ def build_tree_from_sent(sentence):
 
     # Creates all the outgoing edges of the root node
     for kodkod in nodes:
-        weight = 0
-        if kodkod.word in words_deps["ROOT"]:
-            weight = words_deps["ROOT"][kodkod.word]
+        weight = calc_score(root_node, kodkod, teta, sentence)
         new_edge = Edge.Edge(index_edge, root_node, kodkod, weight)
         edges[new_edge.id] = new_edge
         root_node.add_outgoing_edge(new_edge)
@@ -296,10 +293,11 @@ def mst(nodes, edges):
             for i, tzela in enumerate(best_in_edge):
                 if tzela in kicks_out[edge_id]:
                     best_in_edge[i] = edge_id
-    all_weights = 0
+
+    edges_set = set()
     for best_edge in best_in_edge:
-        all_weights += edges[best_edge].origin_weight
-    return all_weights
+        edges_set.add(edges[best_edge])
+    return edges_set
 
 
 def is_cycle(edges):
