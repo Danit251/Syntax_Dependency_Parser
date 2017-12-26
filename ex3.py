@@ -84,133 +84,38 @@ def define_weights(word, deps, tree):
 # ----------------------------- part b ----------------------------------------
 # todo change to tree instead of sentence
 def feature_function(node1, node2, sentence):
-    word1_ind = words_dict[node1.word]
-    word2_ind = words_dict[node2.word]
-    tag1_ind = tags_dict[node1.tag]
-    tag2_ind = tags_dict[node2.tag]
-
-    # feature_vec = np.zeros(len(words_dict) ** 2 + len(tags_dict) ** 2 + 4)
     feature_vec = dok_matrix(
         (len(words_dict) ** 2 + len(tags_dict) ** 2 + 4, 1))
     word_feature_ind = tag_feature_ind = -1
 
-    if word2_ind != -1 and word1_ind != -1:
-        word_feature_ind = word1_ind * len(words_dict) + word2_ind
-        feature_vec[word_feature_ind, 0] = 1
+    if node1.word in words_dict:
+        word1_ind = words_dict[node1.word]
+        if node2.word in words_dict:
+            word2_ind = words_dict[node2.word]
+            word_feature_ind = word1_ind * len(words_dict) + word2_ind
+            feature_vec[word_feature_ind, 0] = 1
 
-    if tag1_ind != -1 and tag2_ind != -1:
-        tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(
-            tags_dict) + tag2_ind
-        feature_vec[tag_feature_ind, 0] = 1
+    if node1.tag in tags_dict:
+        tag1_ind = tags_dict[node1.tag]
+        if node2.tag in tags_dict:
+            tag2_ind = tags_dict[node2.tag]
+            tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(
+                tags_dict) + tag2_ind
+            feature_vec[tag_feature_ind, 0] = 1
 
     # part e:
     if word_feature_ind != -1:
         feature_vec = features_orders(feature_vec, sentence, node1, node2,
-                                    'word', 0)
-        # word1_ind = find_in_sentence(sentence, node1['word'])
-        # if word1_ind < len(sentence) - 1:
-        #     if sentence[word1_ind + 1, 0] == node2['word']:
-        #         feature_vec[-1, 0] = 1
-        # elif word1_ind > 0:
-        #     if sentence[word1_ind - 1, 0] == node2['word']:
-        #         feature_vec[-2, 0] = 1
+                                      'word', 0)
 
     if tag_feature_ind != -1:
         feature_vec = features_orders(feature_vec, sentence, node1, node2,
                                       'tag', 1)
-    #     tag1_ind = find_in_sentence(sentence, node1['tag'], 1)
-    #     if tag1_ind < len(sentence) - 1:
-    #         if sentence[tag1_ind + 1, 1] == node2['tag']:
-    #             feature_vec[-3, 0] = 1
-    #             print("in")
-    #     elif tag1_ind > 0:
-    #         if sentence[tag1_ind - 1, 1] == node2['tag']:
-    #             feature_vec[-4, 0] = 1
 
     return feature_vec
 
 
-# ----------------------------- part c ----------------------------------------
-def perceptron(feature_size, num_iter, feature_func):
-    teta = np.zeros(feature_size)
-    shuffled_training = deepcopy(training_set)
-    np.random.shuffle(shuffled_training)
-    corpus_size = len(corpus_sentences)
-    for r in range(num_iter):
-        for i, tree in enumerate(shuffled_training):
-            sentence = create_sentence(tree)
-            # This should do the MST - we think so
-            tree_result = tree_score(sentence)
-            cur_teta = (r - 1) * corpus_size + i
-            teta[cur_teta] = teta[cur_teta - 1] + \
-                             calc_tree_features(tree, sentence) \
-                             - calc_tree_features(tree_result, sentence)
-    return np.sum(teta) / (num_iter * corpus_size)
-
-
-def calc_score(node1, node2, teta, sentence):
-    vec = feature_function(node1, node2, sentence)
-    current_score = 0
-    for item in vec.items():
-        current_score += teta[item[0]]
-    return current_score
-
-
-def calc_right_tree(tree):
-    edges_set = set()
-    edge_ind = 0
-    for i in tree.nodes:
-        word = tree.nodes[i]["word"]
-        tag = tree.nodes[i]["tag"]
-        deps = tree.nodes[i]["deps"]
-        node1 = Node.Node(word, i, tag)
-        if word is None:
-            for dep_num in deps['ROOT']:
-                dep_word = tree.nodes[dep_num]["word"]
-                dep_tag = tree.nodes[dep_num]["tag"]
-                node2 = Node.Node(dep_word, dep_num, dep_tag)
-                curr_edge = Edge.Edge(edge_ind, node1, node2, 0)
-                edges_set.add(curr_edge)
-                edge_ind += 1
-        else:
-            for dep_num in deps['']:
-                dep_word = tree.nodes[dep_num]["word"]
-                dep_tag = tree.nodes[dep_num]["tag"]
-                node2 = Node.Node(dep_word, dep_num, dep_tag)
-                curr_edge = Edge.Edge(edge_ind, node1, node2, 0)
-                edges_set.add(curr_edge)
-                edge_ind += 1
-
-    return edges_set
-
-
-def tree_score(tree, teta):
-    sum_score = 0
-    # todo remove (update e with tree instead of sentence)
-    sentence = create_sentence(tree)
-    for i in range(1, len(tree.nodes)):
-        for j in range(1, len(tree.nodes)):
-            sum_score += calc_score(tree.nodes[i], tree.nodes[j], teta,
-                                    sentence)
-            # print(sum_score)
-        sum_score += calc_score({"word": 'ROOT', "tag": 'ROOT'}, tree.nodes[i],
-                                teta, sentence)
-    return sum_score
-
-
-# ----------------------------- part e ----------------------------------------
-def features_orders(feature_vec, sentence, node1, node2, word_or_tag, ind):
-    ind_options = find_in_sentence(sentence, node1[word_or_tag],
-                                         word_or_tag=ind)
-    for word1_ind in ind_options:
-        if word1_ind < len(sentence) - 1:
-            if sentence[word1_ind + 1, ind] == node2[word_or_tag]:
-                feature_vec[-1-2*ind, 0] = 1
-        elif word1_ind > 0:
-            if sentence[word1_ind - 1, ind] == node2[word_or_tag]:
-                feature_vec[-2-2*ind, 0] = 1
-    return feature_vec
-
+# ------------------------------- MST ----------------------------------------
 
 def build_tree_from_sent(teta, sentence):
     nodes = []
@@ -343,6 +248,107 @@ def is_cycle(edges):
     return None
 
 
+def calc_score(node1, node2, teta, sentence):
+    vec = feature_function(node1, node2, sentence)
+    current_score = 0
+    for item in vec.items():
+        current_score += teta[item[0]]
+    return current_score
+
+
+# ----------------------------- part c ----------------------------------------
+
+def perceptron(feature_size, num_iter):
+    arr_teta = []
+    curr_teta = dok_matrix((feature_size, 1))
+    arr_teta.append(curr_teta)
+    shuffled_training = deepcopy(training_set)
+    corpus_size = len(corpus_sentences)
+    for r in range(num_iter):
+        np.random.shuffle(shuffled_training)
+        for i, tree in enumerate(shuffled_training):
+            sentence = create_sentence(tree)
+            mst_edges = calc_tree(curr_teta, sentence)
+            right_edges = calc_right_tree(tree)
+            curr_teta += sum_features_edges(right_edges, sentence) - \
+                         sum_features_edges(mst_edges, sentence)
+            arr_teta.append(curr_teta)
+
+    return np.sum(arr_teta) / (num_iter * corpus_size)
+
+
+# activate MST algorithm
+def calc_tree(teta, sentence):
+    nodes, edges = build_tree_from_sent(teta, sentence)
+    return mst(nodes, edges)
+
+
+def calc_right_tree(tree):
+    # todo update None = ROOT
+    edges_set = set()
+    edge_ind = 0
+    for i in tree.nodes:
+        word = tree.nodes[i]["word"]
+        tag = tree.nodes[i]["tag"]
+        deps = tree.nodes[i]["deps"]
+        if word is None:
+            node1 = Node.Node('ROOT', i, 'ROOT')
+        else:
+            node1 = Node.Node(word, i, tag)
+        if word is None:
+            for dep_num in deps['ROOT']:
+                dep_word = tree.nodes[dep_num]["word"]
+                dep_tag = tree.nodes[dep_num]["tag"]
+                node2 = Node.Node(dep_word, dep_num, dep_tag)
+                curr_edge = Edge.Edge(edge_ind, node2, node1, 0)
+                edges_set.add(curr_edge)
+                edge_ind += 1
+        else:
+            for dep_num in deps['']:
+                dep_word = tree.nodes[dep_num]["word"]
+                dep_tag = tree.nodes[dep_num]["tag"]
+                node2 = Node.Node(dep_word, dep_num, dep_tag)
+                curr_edge = Edge.Edge(edge_ind, node2, node1, 0)
+                edges_set.add(curr_edge)
+                edge_ind += 1
+
+    return edges_set
+
+
+def sum_features_edges(edges_set, sentence, feature_size):
+    # todo feature_size
+    edges_sum = dok_matrix((feature_size, 1))
+    for edge in edges_set:
+        print("curr", feature_function(edge.out_node, edge.in_node, sentence))
+        print(" ")
+        edges_sum += feature_function(edge.out_node, edge.in_node, sentence)
+        print("sum", edges_sum)
+        print(" ")
+    return edges_sum
+
+
+
+# ----------------------------- part e ----------------------------------------
+def features_orders(feature_vec, sentence, node1, node2, word_or_tag, ind):
+    if word_or_tag == 'word':
+        value1 = node1.word
+        value2 = node1.word
+    else:
+        value1 = node1.tag
+        value2 = node2.tag
+    ind_options = find_in_sentence(sentence, value1,
+                                   word_or_tag=ind)
+
+    for word1_ind in ind_options:
+        if word1_ind < len(sentence) - 1:
+            if sentence[word1_ind + 1, ind] == value2:
+                feature_vec[-1 - 2 * ind, 0] = 1
+        elif word1_ind > 0:
+            if sentence[word1_ind - 1, ind] == value2:
+                feature_vec[-2 - 2 * ind, 0] = 1
+    return feature_vec
+
+
 def create_united_nodes(nodes_to_union, index):
     new_node = Node.Node("", index)
     for node in nodes_to_union:
@@ -361,7 +367,3 @@ def create_united_nodes(nodes_to_union, index):
             if outgoing_edge.in_node not in nodes_to_union and incoming_edge.in_node is not new_node:
                 new_node.add_outgoing_edge(outgoing_edge)
     return new_node
-
-
-def calc_tree_features(tree, sentence):
-    pass
