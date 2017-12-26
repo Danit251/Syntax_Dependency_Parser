@@ -58,27 +58,27 @@ def set_dicts(corpus):
                 tags_dict[tag] = len(tags_dict)
 
 
-def define_weights(word, deps, tree):
-    if word is None:
-        for dep_num in deps['ROOT']:
-            dep = tree.nodes[dep_num]["word"]
-            if 'ROOT' in words_deps:
-                if dep in words_deps['ROOT']:
-                    words_deps['ROOT'][dep] += 1
-                else:
-                    words_deps['ROOT'][dep] = 1
-            else:
-                words_deps['ROOT'] = {dep: 1}
-    else:
-        for dep_num in deps['']:
-            dep = tree.nodes[dep_num]["word"]
-            if word in words_deps:
-                if dep in words_deps[word]:
-                    words_deps[word][dep] += 1
-                else:
-                    words_deps[word][dep] = 1
-            else:
-                words_deps[word] = {dep: 1}
+# def define_weights(word, deps, tree):
+#     if word is None:
+#         for dep_num in deps['ROOT']:
+#             dep = tree.nodes[dep_num]["word"]
+#             if 'ROOT' in words_deps:
+#                 if dep in words_deps['ROOT']:
+#                     words_deps['ROOT'][dep] += 1
+#                 else:
+#                     words_deps['ROOT'][dep] = 1
+#             else:
+#                 words_deps['ROOT'] = {dep: 1}
+#     else:
+#         for dep_num in deps['']:
+#             dep = tree.nodes[dep_num]["word"]
+#             if word in words_deps:
+#                 if dep in words_deps[word]:
+#                     words_deps[word][dep] += 1
+#                 else:
+#                     words_deps[word][dep] = 1
+#             else:
+#                 words_deps[word] = {dep: 1}
 
 
 # ----------------------------- part b ----------------------------------------
@@ -105,12 +105,8 @@ def feature_function(node1, node2, sentence):
 
     # part e:
     if word_feature_ind != -1:
-        feature_vec = features_orders(feature_vec, sentence, node1, node2,
-                                      'word', 0)
-
-    if tag_feature_ind != -1:
-        feature_vec = features_orders(feature_vec, sentence, node1, node2,
-                                      'tag', 1)
+        feature_vec = features_orders(feature_vec, sentence, node1.word,
+                                      node2.word, 0)
 
     return feature_vec
 
@@ -327,25 +323,19 @@ def sum_features_edges(edges_set, sentence, feature_size):
     return edges_sum
 
 
-
 # ----------------------------- part e ----------------------------------------
-def features_orders(feature_vec, sentence, node1, node2, word_or_tag, ind):
-    if word_or_tag == 'word':
-        value1 = node1.word
-        value2 = node1.word
-    else:
-        value1 = node1.tag
-        value2 = node2.tag
-    ind_options = find_in_sentence(sentence, value1,
+def features_orders(feature_vec, sentence, word1, word2, ind):
+    ind_options = find_in_sentence(sentence, word1,
                                    word_or_tag=ind)
-
     for word1_ind in ind_options:
-        if word1_ind < len(sentence) - 1:
-            if sentence[word1_ind + 1, ind] == value2:
-                feature_vec[-1 - 2 * ind, 0] = 1
-        elif word1_ind > 0:
-            if sentence[word1_ind - 1, ind] == value2:
-                feature_vec[-2 - 2 * ind, 0] = 1
+        if word1_ind < len(sentence) - 1 and sentence[word1_ind + 1, ind] == word2:
+                feature_vec[-4] = 1
+        elif word1_ind < len(sentence) - 2 and sentence[word1_ind + 2, ind] == word2:
+                feature_vec[-3] = 1
+        elif word1_ind < len(sentence) - 3 and sentence[word1_ind + 3, ind] == word2:
+                feature_vec[-2] = 1
+        elif word1_ind < len(sentence) - 4 and sentence[word1_ind + 4, ind] == word2:
+                feature_vec[-1] = 1
     return feature_vec
 
 
