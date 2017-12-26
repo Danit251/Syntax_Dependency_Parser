@@ -322,10 +322,44 @@ def sum_features_edges(edges_set, sentence, feature_size):
         print(" ")
     return edges_sum
 
+# ----------------------------- part d ----------------------------------------
 
+<<<<<<< HEAD
 # ----------------------------- part e ----------------------------------------
 def features_orders(feature_vec, sentence, word1, word2, ind):
     ind_options = find_in_sentence(sentence, word1,
+=======
+
+def test(teta):
+    num_edges = 0
+    num_right_edges = 0
+    for tree in test_set:
+        sentence = create_sentence(tree)
+        mst_edges = calc_tree(teta, sentence)
+        right_edges = calc_right_tree(tree)
+        num_edges += len(right_edges)
+
+        for right_edge in right_edges:
+            for mst_edge in mst_edges:
+                if (right_edge.out_node == mst_edge.out_node) and (right_edge.in_node == mst_edge.in_node):
+                    num_right_edges += 1
+                    mst_edges.remove(mst_edge)
+                    break
+
+    return num_right_edges/num_edges
+
+# ----------------------------- part e ----------------------------------------
+
+
+def features_orders(feature_vec, sentence, node1, node2, word_or_tag, ind):
+    if word_or_tag == 'word':
+        value1 = node1.word
+        value2 = node1.word
+    else:
+        value1 = node1.tag
+        value2 = node2.tag
+    ind_options = find_in_sentence(sentence, value1,
+>>>>>>> b8ff89d48da1c957422d82cc4e649ae3b4cdacda
                                    word_or_tag=ind)
     for word1_ind in ind_options:
         if word1_ind < len(sentence) - 1 and sentence[word1_ind + 1, ind] == word2:
