@@ -1,8 +1,9 @@
 from nltk.corpus import dependency_treebank
 import numpy as np
-from scipy.sparse import dok_matrix, csr_matrix
+from scipy.sparse import dok_matrix
 from copy import deepcopy
-import Node, Edge
+import Node
+import Edge
 
 corpus_sentences = dependency_treebank.parsed_sents()
 
@@ -36,7 +37,6 @@ def find_in_sentence(sentence, value, word_or_tag=0):
     for i, node in enumerate(sentence):
         if node[word_or_tag] == value:
             options.append(i)
-            # return i
     return options
 
 
@@ -50,43 +50,16 @@ def set_dicts(corpus):
         for i in range(0, len(tree.nodes)):
             word = tree.nodes[i]["word"]
             tag = tree.nodes[i]["tag"]
-            # deps = tree.nodes[i]["deps"]
-            # define_weights(word, deps, tree)
             if word not in words_dict and word is not None:
                 words_dict[word] = len(words_dict)
             if tag not in tags_dict and tag is not None:
                 tags_dict[tag] = len(tags_dict)
 
 
-# def define_weights(word, deps, tree):
-#     if word is None:
-#         for dep_num in deps['ROOT']:
-#             dep = tree.nodes[dep_num]["word"]
-#             if 'ROOT' in words_deps:
-#                 if dep in words_deps['ROOT']:
-#                     words_deps['ROOT'][dep] += 1
-#                 else:
-#                     words_deps['ROOT'][dep] = 1
-#             else:
-#                 words_deps['ROOT'] = {dep: 1}
-#     else:
-#         for dep_num in deps['']:
-#             dep = tree.nodes[dep_num]["word"]
-#             if word in words_deps:
-#                 if dep in words_deps[word]:
-#                     words_deps[word][dep] += 1
-#                 else:
-#                     words_deps[word][dep] = 1
-#             else:
-#                 words_deps[word] = {dep: 1}
-
-
-# ----------------------------- part b ----------------------------------------
-# todo change to tree instead of sentence
 def feature_function(node1, node2, sentence):
     feature_vec = dok_matrix(
         (len(words_dict) ** 2 + len(tags_dict) ** 2 + 4, 1))
-    word_feature_ind = tag_feature_ind = -1
+    word_feature_ind = -1
 
     if node1.word in words_dict:
         word1_ind = words_dict[node1.word]
@@ -245,7 +218,7 @@ def is_cycle(edges):
 
 
 def create_united_nodes(nodes_to_union, index):
-    new_node = Node.Node("", index, "")
+    new_node = Node.Node("", index)
     for node in nodes_to_union:
 
         # Adds and updates all the incoming edges to the united node
@@ -286,14 +259,11 @@ def perceptron(feature_size, num_iter):
             sentence = create_sentence(tree)
             mst_edges = calc_tree(curr_teta, sentence)
             right_edges = calc_right_tree(tree)
-            curr_teta += sum_features_edges(right_edges, sentence, feature_size) - \
+            curr_teta += sum_features_edges(right_edges, sentence,
+                                            feature_size) - \
                          sum_features_edges(mst_edges, sentence, feature_size)
             arr_teta.append(curr_teta)
-            print("in")
-    #         todo delete:
-            break
 
-    print("in")
     return np.sum(arr_teta) / (num_iter * corpus_size)
 
 
@@ -303,8 +273,17 @@ def calc_tree(teta, sentence):
     return mst(nodes, edges)
 
 
+def update_edges_set(tree, dep_num, edges_set, edge_ind, node1):
+    dep_word = tree.nodes[dep_num]["word"]
+    dep_tag = tree.nodes[dep_num]["tag"]
+    node2 = Node.Node(dep_word, dep_num, dep_tag)
+    curr_edge = Edge.Edge(edge_ind, node2, node1, 0)
+    edges_set.add(curr_edge)
+    edge_ind += 1
+    return edges_set, edge_ind
+
+
 def calc_right_tree(tree):
-    # todo update None = ROOT
     edges_set = set()
     edge_ind = 0
     for i in tree.nodes:
@@ -317,33 +296,19 @@ def calc_right_tree(tree):
             node1 = Node.Node(word, i, tag)
         if word is None:
             for dep_num in deps['ROOT']:
-                dep_word = tree.nodes[dep_num]["word"]
-                dep_tag = tree.nodes[dep_num]["tag"]
-                node2 = Node.Node(dep_word, dep_num, dep_tag)
-                curr_edge = Edge.Edge(edge_ind, node2, node1, 0)
-                edges_set.add(curr_edge)
-                edge_ind += 1
+                edges_set, edge_ind = update_edges_set(tree, dep_num,
+                                                       edges_set, edge_ind, node1)
         else:
             for dep_num in deps['']:
-                dep_word = tree.nodes[dep_num]["word"]
-                dep_tag = tree.nodes[dep_num]["tag"]
-                node2 = Node.Node(dep_word, dep_num, dep_tag)
-                curr_edge = Edge.Edge(edge_ind, node2, node1, 0)
-                edges_set.add(curr_edge)
-                edge_ind += 1
-
+                edges_set, edge_ind = update_edges_set(tree, dep_num,
+                                                       edges_set, edge_ind, node1)
     return edges_set
 
 
 def sum_features_edges(edges_set, sentence, feature_size):
-    # todo feature_size
     edges_sum = dok_matrix((feature_size, 1))
     for edge in edges_set:
-        print("curr", feature_function(edge.out_node, edge.in_node, sentence))
-        print(" ")
         edges_sum += feature_function(edge.out_node, edge.in_node, sentence)
-        print("sum", edges_sum)
-        print(" ")
     return edges_sum
 
 
@@ -361,7 +326,7 @@ def test(teta):
         for right_edge in right_edges:
             for mst_edge in mst_edges:
                 if (right_edge.out_node == mst_edge.out_node) and (
-                    right_edge.in_node == mst_edge.in_node):
+                            right_edge.in_node == mst_edge.in_node):
                     num_right_edges += 1
                     mst_edges.remove(mst_edge)
                     break
@@ -396,6 +361,7 @@ def main():
     feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2 + 4
     res = perceptron(feature_size, num_iter=NUM_ITER)
     print(res)
+
 
 if __name__ == '__main__':
     main()

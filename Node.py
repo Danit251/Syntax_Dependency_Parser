@@ -1,7 +1,7 @@
 
 class Node:
 
-    def __init__(self, word, id, tag):
+    def __init__(self, word, id, tag=""):
         self.word = word
         self.id = id
         self.tag = tag
