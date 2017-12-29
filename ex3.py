@@ -4,6 +4,7 @@ from scipy.sparse import dok_matrix
 from copy import deepcopy
 import Node
 import Edge
+import time
 
 corpus_sentences = dependency_treebank.parsed_sents()
 
@@ -92,7 +93,6 @@ def build_tree_from_sent(teta, sentence):
     root_node = Node.Node("ROOT", 0, "ROOT")
     index_node = 1
     index_edge = 1
-
     # Creates all the nodes of the graph
     for pair in sentence:
         word = pair[0]
@@ -232,7 +232,7 @@ def create_united_nodes(nodes_to_union, index):
         for outgoing_edge in node.outgoing_edges:
             outgoing_edge.out_node = new_node
             # Does not add edges between the united nodes
-            if outgoing_edge.in_node not in nodes_to_union and incoming_edge.in_node is not new_node:
+            if outgoing_edge.in_node not in nodes_to_union and outgoing_edge.in_node is not new_node:
                 new_node.add_outgoing_edge(outgoing_edge)
     return new_node
 
@@ -248,23 +248,38 @@ def calc_score(node1, node2, teta, sentence):
 # ----------------------------- part c ----------------------------------------
 
 def perceptron(feature_size, num_iter):
-    arr_teta = []
     curr_teta = dok_matrix((feature_size, 1))
-    arr_teta.append(curr_teta)
-    shuffled_training = deepcopy(training_set)
+    sum_teta = curr_teta
+    shuffled_training = deepcopy(training_set[:2000])
+    # shuffled_training = deepcopy(training_set)
     corpus_size = len(corpus_sentences)
+
+    # todo delete
+    start = time.time()
+    print("hello")
+
     for r in range(num_iter):
         np.random.shuffle(shuffled_training)
         for i, tree in enumerate(shuffled_training):
             sentence = create_sentence(tree)
             mst_edges = calc_tree(curr_teta, sentence)
             right_edges = calc_right_tree(tree)
-            curr_teta += sum_features_edges(right_edges, sentence,
-                                            feature_size) - \
-                         sum_features_edges(mst_edges, sentence, feature_size)
-            arr_teta.append(curr_teta)
+            sum_mst = -1 * sum_features_edges(right_edges, sentence, feature_size)
+            sum_right = sum_features_edges(mst_edges, sentence, feature_size)
+            curr_teta += sum_mst + sum_right
+            sum_teta += curr_teta
 
-    return np.sum(arr_teta) / (num_iter * corpus_size)
+    # todo delete
+    end = time.time()
+    print(end - start)
+
+    res = sum_teta / (num_iter * corpus_size)
+
+    # todo delete
+    end = time.time()
+    print(end - start)
+
+    return res
 
 
 # activate MST algorithm
@@ -297,11 +312,13 @@ def calc_right_tree(tree):
         if word is None:
             for dep_num in deps['ROOT']:
                 edges_set, edge_ind = update_edges_set(tree, dep_num,
-                                                       edges_set, edge_ind, node1)
+                                                       edges_set, edge_ind,
+                                                       node1)
         else:
             for dep_num in deps['']:
                 edges_set, edge_ind = update_edges_set(tree, dep_num,
-                                                       edges_set, edge_ind, node1)
+                                                       edges_set, edge_ind,
+                                                       node1)
     return edges_set
 
 
@@ -361,12 +378,25 @@ def main():
     feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2 + 4
     teta = dok_matrix((feature_size, 1))
 
+    # =====
+    # sentence = create_sentence(training_set[70])
+    # nodes, edges = build_tree_from_sent(teta, sentence)
+    # print(nodes)
+    # print(edges)
+    # print(mst(nodes, edges))
+
+    # for i in range(len(training_set)):
+    # print(training_set[70])
+    # print(i, len(training_set[i].nodes))
+
+
     # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)
-    print(res)
+    # print("from percepton ", res)
 
     # evaluation:
-    test(teta)
+    # test(teta)
+
 
 if __name__ == '__main__':
     main()
