@@ -6,3 +6,5 @@ class Edge:
         self.weight = weight
         self.in_node = in_node
         self.out_node = out_node
+        self.origin_in_node = in_node
+        self.origin_out_node = out_node

@@ -19,6 +19,8 @@ words_dict = {}
 tags_dict = {}
 feature_vec_size = 0
 
+additional_features = True
+
 
 # --------------------------- helper Functions --------------------------------
 def create_sentence(tree):
@@ -58,8 +60,10 @@ def set_dicts(corpus):
 
 
 def feature_function(node1, node2, sentence):
-    feature_vec = dok_matrix(
-        (len(words_dict) ** 2 + len(tags_dict) ** 2 + 4, 1))
+    feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2
+    if additional_features:
+        feature_size = feature_size + 4
+    feature_vec = dok_matrix((feature_size, 1))
     word_feature_ind = -1
 
     if node1.word in words_dict:
@@ -78,9 +82,10 @@ def feature_function(node1, node2, sentence):
             feature_vec[tag_feature_ind, 0] = 1
 
     # part e:
-    if word_feature_ind != -1:
-        feature_vec = features_orders(feature_vec, sentence, node1.word,
-                                      node2.word, 0)
+    if additional_features:
+        if word_feature_ind != -1:
+            feature_vec = features_orders(feature_vec, sentence, node1.word,
+                                          node2.word, 0)
 
     return feature_vec
 
@@ -237,7 +242,7 @@ def create_united_nodes(nodes_to_union, index):
     return new_node
 
 
-def calc_score(node1, node2, teta, sentence):
+def calc_score(node1, node2, teta, sentence, ):
     vec = feature_function(node1, node2, sentence)
     current_score = 0
     for item in vec.items():
@@ -248,10 +253,12 @@ def calc_score(node1, node2, teta, sentence):
 # ----------------------------- part c ----------------------------------------
 
 def perceptron(feature_size, num_iter):
+    if additional_features:
+        feature_size = feature_size + 4
     curr_teta = dok_matrix((feature_size, 1))
     sum_teta = curr_teta
     # shuffled_training = deepcopy(training_set[:100])
-    shuffled_training = training_set[:100]
+    shuffled_training = training_set[:2000]
     # shuffled_training = deepcopy(training_set)
     corpus_size = len(corpus_sentences)
 
@@ -267,7 +274,8 @@ def perceptron(feature_size, num_iter):
             right_edges = calc_right_tree(tree)
             sum_mst = -1 * sum_features_edges(mst_edges, sentence,
                                               feature_size)
-            sum_right = sum_features_edges(right_edges, sentence, feature_size)
+            sum_right = sum_features_edges(right_edges, sentence,
+                                           feature_size)
             curr_teta += sum_mst + sum_right
             sum_teta += curr_teta
 
@@ -275,7 +283,7 @@ def perceptron(feature_size, num_iter):
     end = time.time()
     print(end - start)
 
-    res = sum_teta / (num_iter * 100)
+    res = sum_teta / (num_iter * 2000)
 
     # todo delete
     end = time.time()
@@ -327,7 +335,8 @@ def calc_right_tree(tree):
 def sum_features_edges(edges_set, sentence, feature_size):
     edges_sum = dok_matrix((feature_size, 1))
     for edge in edges_set:
-        edges_sum += feature_function(edge.out_node, edge.in_node, sentence)
+        edges_sum += feature_function(edge.origin_out_node,
+                                      edge.origin_in_node, sentence)
     return edges_sum
 
 
@@ -336,7 +345,7 @@ def sum_features_edges(edges_set, sentence, feature_size):
 def test(teta):
     num_edges = 0
     num_right_edges = 0
-    for tree in test_set[70:71]:
+    for tree in test_set:
         sentence = create_sentence(tree)
         mst_edges = calc_tree(teta, sentence)
         right_edges = calc_right_tree(tree)
@@ -344,8 +353,10 @@ def test(teta):
 
         for right_edge in right_edges:
             for mst_edge in mst_edges:
-                if (right_edge.out_node.word == mst_edge.out_node.word) and (
-                            right_edge.in_node.word == mst_edge.in_node.word):
+                if (right_edge.origin_out_node.word ==
+                        mst_edge.origin_out_node.word) and (
+                            right_edge.origin_in_node.word ==
+                            mst_edge.origin_in_node.word):
                     num_right_edges += 1
                     mst_edges.remove(mst_edge)
                     break
@@ -377,8 +388,9 @@ def features_orders(feature_vec, sentence, word1, word2, ind):
 
 def main():
     set_dicts(training_set)
-    feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2 + 4
-    teta = dok_matrix((feature_size, 1))
+    feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2
+    global additional_features
+    additional_features = False
 
     # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)
