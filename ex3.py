@@ -258,9 +258,9 @@ def perceptron(feature_size, num_iter):
     curr_teta = dok_matrix((feature_size, 1))
     sum_teta = curr_teta
     # shuffled_training = deepcopy(training_set[:100])
-    shuffled_training = training_set[:2000]
+    shuffled_training = training_set[:500]
     # shuffled_training = deepcopy(training_set)
-    corpus_size = len(corpus_sentences)
+    # corpus_size = len(corpus_sentences)
 
     # todo delete
     start = time.time()
@@ -283,7 +283,7 @@ def perceptron(feature_size, num_iter):
     end = time.time()
     print(end - start)
 
-    res = sum_teta / (num_iter * 2000)
+    res = sum_teta / (num_iter * len(shuffled_training))
 
     # todo delete
     end = time.time()
@@ -390,7 +390,7 @@ def main():
     set_dicts(training_set)
     feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2
     global additional_features
-    additional_features = False
+    additional_features = True
 
     # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)
