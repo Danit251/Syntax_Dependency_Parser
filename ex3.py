@@ -1,3 +1,5 @@
+from collections import namedtuple, defaultdict
+
 from nltk.corpus import dependency_treebank
 import numpy as np
 from scipy.sparse import dok_matrix
@@ -20,6 +22,8 @@ tags_dict = {}
 feature_vec_size = 0
 
 additional_features = True
+
+Arc = namedtuple('Arc', ('tail', 'weight', 'head'))
 
 
 # --------------------------- helper Functions --------------------------------
@@ -47,10 +51,10 @@ def find_in_sentence(sentence, value, word_or_tag=0):
 def set_dicts(corpus):
     global words_dict
     global tags_dict
-    words_dict = {'ROOT': 0}
-    tags_dict = {'ROOT': 0}
+    words_dict = {None: 0}
+    tags_dict = {'TOP': 0}
     for tree in corpus:
-        for i in range(0, len(tree.nodes)):
+        for i in range(1, len(tree.nodes)):
             word = tree.nodes[i]["word"]
             tag = tree.nodes[i]["tag"]
             if word not in words_dict and word is not None:
@@ -66,183 +70,113 @@ def feature_function(node1, node2, sentence):
     feature_vec = dok_matrix((feature_size, 1))
     word_feature_ind = -1
 
-    if node1.word in words_dict:
-        word1_ind = words_dict[node1.word]
-        if node2.word in words_dict:
-            word2_ind = words_dict[node2.word]
+    if node1['word'] in words_dict:
+        word1_ind = words_dict[node1['word']]
+        if node2['word'] in words_dict:
+            word2_ind = words_dict[node2['word']]
             word_feature_ind = word1_ind * len(words_dict) + word2_ind
             feature_vec[word_feature_ind, 0] = 1
 
-    if node1.tag in tags_dict:
-        tag1_ind = tags_dict[node1.tag]
-        if node2.tag in tags_dict:
-            tag2_ind = tags_dict[node2.tag]
+    if node1['tag'] in tags_dict:
+        tag1_ind = tags_dict[node1['tag']]
+        if node2['tag'] in tags_dict:
+            tag2_ind = tags_dict[node2['tag']]
             tag_feature_ind = len(words_dict) ** 2 + tag1_ind * len(
                 tags_dict) + tag2_ind
             feature_vec[tag_feature_ind, 0] = 1
 
+    # TODO FIX FEATURES
     # part e:
     if additional_features:
-        if word_feature_ind != -1:
-            feature_vec = features_orders(feature_vec, sentence, node1.word,
-                                          node2.word, 0)
+        # if word_feature_ind != -1:
+        add1 = node1['address']
+        add2 = node2['address']
+        if (add2 - add1) < 4 and (add2-add1) > 0:
+            feature_vec[-(5-add2-add1)] = 1
+        #     feature_vec = features_orders(feature_vec, sentence, node1.word,
+        #                                   node2.word, 0)
 
     return feature_vec
 
 
 # ------------------------------- MST ----------------------------------------
 
-def build_tree_from_sent(teta, sentence):
-    nodes = []
-    edges = {}
-    root_node = Node.Node("ROOT", 0, "ROOT")
-    index_node = 1
-    index_edge = 1
-    # Creates all the nodes of the graph
-    for pair in sentence:
-        word = pair[0]
-        tag = pair[1]
-        new_node = Node.Node(word, index_node, tag)
-        nodes.append(new_node)
-        index_node += 1
+def build_tree_from_sent(teta, tree):
+    # TODO minus?
+    edges = []
+    sentence = create_sentence(tree)
+    for i in range(1, len(tree.nodes)):
+        node = tree.nodes[i]
+        weight = calc_score(tree.nodes[0], node, teta, sentence)
+        edges.append(Arc(i, weight, 0))
+        for j in range(1, len(tree.nodes)):
+            weight = calc_score(tree.nodes[j], node, teta, sentence)
+            edges.append(Arc(i, weight, j))
+    return edges
 
-    # Creates all the edges of all the nodes except the root node
-    for fst_node in nodes:
-        for scd_node in nodes:
-            if fst_node.id == scd_node.id:
+
+def mst(arcs, sink):
+    good_arcs = []
+    quotient_map = {arc.tail: arc.tail for arc in arcs}
+    quotient_map[sink] = sink
+    while True:
+        min_arc_by_tail_rep = {}
+        successor_rep = {}
+        for arc in arcs:
+            if arc.tail == sink:
                 continue
-
-            weight = calc_score(fst_node, scd_node, teta, sentence)
-            new_edge = Edge.Edge(index_edge, fst_node, scd_node, weight)
-            edges[new_edge.id] = new_edge
-            fst_node.add_outgoing_edge(new_edge)
-            scd_node.add_incoming_edge(new_edge)
-            index_edge += 1
-
-    # Creates all the outgoing edges of the root node
-    for kodkod in nodes:
-        weight = calc_score(root_node, kodkod, teta, sentence)
-        new_edge = Edge.Edge(index_edge, root_node, kodkod, weight)
-        edges[new_edge.id] = new_edge
-        root_node.add_outgoing_edge(new_edge)
-        kodkod.add_incoming_edge(new_edge)
-        index_edge += 1
-
-    return nodes, edges
-
-
-# Gets all the nodes of the graph(without the root) and find the MST
-def mst(nodes, edges):
-    num_nodes = len(nodes)
-    # Each element: edge.id
-    best_in_edge = []
-    # Each element: edge.id : {edges.id}
-    kicks_out = {}
-    cur_edges = []
-    while nodes:
-        cur_node = nodes.pop()
-        max_edge = cur_node.get_max_incoming()
-        best_in_edge.append(max_edge.id)
-        cur_edges.append(max_edge)
-        cycle = is_cycle(cur_edges)
-        if cycle:
-            nodes_in_cycle, edges_in_cycle = cycle
-            edges_in_cycle = set(edges_in_cycle)
-            num_nodes += 1
-            # Updates the kicks_out nodes array
-            for node in nodes_in_cycle:
-                # Updates weight of the vertexes in the cycle and update
-                max_tzela = node.get_max_incoming()
-                node.update_weights()
-                for incoming_edge in node.incoming_edges:
-                    if incoming_edge.id != max_tzela.id:
-                        if incoming_edge.id not in kicks_out:
-                            kicks_out[incoming_edge.id] = []
-                        kicks_out[incoming_edge.id].append(max_tzela.id)
-
-            new_node = create_united_nodes(nodes_in_cycle, num_nodes)
-            nodes.append(new_node)
-            cur_edges = [item for item in cur_edges if
-                         item not in edges_in_cycle]
-
-    # Kicks the bad edges in the reverse way
-    best_in_edge.reverse()
-    for edge_id in best_in_edge:
-        if edge_id in kicks_out:
-            for i, tzela in enumerate(best_in_edge):
-                if tzela in kicks_out[edge_id]:
-                    best_in_edge[i] = edge_id
-
-    edges_set = set()
-    for best_edge in best_in_edge:
-        edges_set.add(edges[best_edge])
-    return edges_set
-
-
-def is_cycle(edges):
-    path_id = set()
-    path_edges = []
-    path = set()
-    visited = set()
-
-    def visit(cur_edge, all_edges):
-        if cur_edge.in_node.id in visited:
-            return None
-
-        vertex = cur_edge.in_node
-        visited.add(vertex.id)
-        path_id.add(vertex.id)
-        path.add(vertex)
-        path_edges.append(cur_edge)
-
-        for edge in vertex.outgoing_edges:
-            if edge not in all_edges:
+            tail_rep = quotient_map[arc.tail]
+            head_rep = quotient_map[arc.head]
+            if tail_rep == head_rep:
                 continue
-            path_edges.append(edge)
-            t = visit(edge, all_edges)
-            if edge.in_node.id in path_id or t:
-                return path, path_edges
-            path_edges.remove(edge)
+            if tail_rep not in min_arc_by_tail_rep or min_arc_by_tail_rep[
+                tail_rep].weight < arc.weight:
+                min_arc_by_tail_rep[tail_rep] = arc
+                successor_rep[tail_rep] = head_rep
+        cycle_reps = find_cycle(successor_rep, sink)
+        if cycle_reps is None:
+            good_arcs.extend(min_arc_by_tail_rep.values())
+            return spanning_arborescence(good_arcs, sink)
+        good_arcs.extend(
+            min_arc_by_tail_rep[cycle_rep] for cycle_rep in cycle_reps)
+        cycle_rep_set = set(cycle_reps)
+        cycle_rep = cycle_rep_set.pop()
+        quotient_map = {
+            node: cycle_rep if node_rep in cycle_rep_set else node_rep for
+            node, node_rep in quotient_map.items()}
 
-        path_id.remove(vertex.id)
-        path.remove(vertex)
-        path_edges.remove(cur_edge)
-        return None
 
-    for my_edge in edges:
-        # if my_edge.out_node.id == 0:
-        #     continue
-        path_id.add(my_edge.out_node.id)
-        path.add(my_edge.out_node)
-        cycle = visit(my_edge, edges)
-        if cycle:
-            return cycle
-        path_id.remove(my_edge.out_node.id)
-        path.remove(my_edge.out_node)
+def find_cycle(successor, sink):
+    visited = {sink}
+    for node in successor:
+        cycle = []
+        while node not in visited:
+            visited.add(node)
+            cycle.append(node)
+            node = successor[node]
+        if node in cycle:
+            return cycle[cycle.index(node):]
     return None
 
 
-def create_united_nodes(nodes_to_union, index):
-    new_node = Node.Node("", index)
-    for node in nodes_to_union:
-
-        # Adds and updates all the incoming edges to the united node
-        for incoming_edge in node.incoming_edges:
-            incoming_edge.in_node = new_node
-            # Does not add edges between the united nodes
-            if incoming_edge.out_node not in nodes_to_union and incoming_edge.out_node is not new_node:
-                new_node.add_incoming_edge(incoming_edge)
-
-        # Adds and updates all the outgoing edges to the united node
-        for outgoing_edge in node.outgoing_edges:
-            outgoing_edge.out_node = new_node
-            # Does not add edges between the united nodes
-            if outgoing_edge.in_node not in nodes_to_union and outgoing_edge.in_node is not new_node:
-                new_node.add_outgoing_edge(outgoing_edge)
-    return new_node
+def spanning_arborescence(arcs, sink):
+    arcs_by_head = defaultdict(list)
+    for arc in arcs:
+        if arc.tail == sink:
+            continue
+        arcs_by_head[arc.head].append(arc)
+    solution_arc_by_tail = {}
+    stack = arcs_by_head[sink]
+    while stack:
+        arc = stack.pop()
+        if arc.tail in solution_arc_by_tail:
+            continue
+        solution_arc_by_tail[arc.tail] = arc
+        stack.extend(arcs_by_head[arc.tail])
+    return solution_arc_by_tail
 
 
-def calc_score(node1, node2, teta, sentence, ):
+def calc_score(node1, node2, teta, sentence):
     vec = feature_function(node1, node2, sentence)
     current_score = 0
     for item in vec.items():
@@ -257,86 +191,89 @@ def perceptron(feature_size, num_iter):
         feature_size = feature_size + 4
     curr_teta = dok_matrix((feature_size, 1))
     sum_teta = curr_teta
-    # shuffled_training = deepcopy(training_set[:100])
-    shuffled_training = training_set[:500]
-    # shuffled_training = deepcopy(training_set)
-    # corpus_size = len(corpus_sentences)
-
-    # todo delete
-    start = time.time()
-    print("hello")
+    # shuffled_training = deepcopy(training_set[2000:4000])
+    shuffled_training = deepcopy(training_set[0:50])
 
     for r in range(num_iter):
         np.random.shuffle(shuffled_training)
         for i, tree in enumerate(shuffled_training):
             sentence = create_sentence(tree)
-            mst_edges = calc_tree(curr_teta, sentence)
+            mst_edges = calc_tree(curr_teta, tree)
             right_edges = calc_right_tree(tree)
-            sum_mst = -1 * sum_features_edges(mst_edges, sentence,
+            # print("mst", i)
+            # for edge in mst_edges:
+            #     print(mst_edges[edge].head, mst_edges[edge].tail)
+
+            # print("right")
+            # for edge in right_edges:
+            #     print(right_edges[edge].head, right_edges[edge].tail)
+
+            sum_mst = -1 * sum_features_edges(tree, mst_edges, sentence,
                                               feature_size)
-            sum_right = sum_features_edges(right_edges, sentence,
+            sum_right = sum_features_edges(tree, right_edges, sentence,
                                            feature_size)
             curr_teta += sum_mst + sum_right
             sum_teta += curr_teta
 
-    # todo delete
-    end = time.time()
-    print(end - start)
-
     res = sum_teta / (num_iter * len(shuffled_training))
-
-    # todo delete
-    end = time.time()
-    print(end - start)
 
     return res
 
 
 # activate MST algorithm
-def calc_tree(teta, sentence):
-    nodes, edges = build_tree_from_sent(teta, sentence)
-    return mst(nodes, edges)
+def calc_tree(teta, tree):
+    edges = build_tree_from_sent(teta, tree)
+    return mst(edges, 0)
 
 
 def update_edges_set(tree, dep_num, edges_set, edge_ind, node1):
-    dep_word = tree.nodes[dep_num]["word"]
-    dep_tag = tree.nodes[dep_num]["tag"]
-    node2 = Node.Node(dep_word, dep_num, dep_tag)
-    curr_edge = Edge.Edge(edge_ind, node2, node1, 0)
+    curr_edge = Arc(edge_ind, dep_num, node1['address'])
     edges_set.add(curr_edge)
     edge_ind += 1
     return edges_set, edge_ind
 
 
 def calc_right_tree(tree):
-    edges_set = set()
+    edges_set = {}
     edge_ind = 0
     for i in tree.nodes:
         word = tree.nodes[i]["word"]
-        tag = tree.nodes[i]["tag"]
+        # tag = tree.nodes[i]["tag"]
         deps = tree.nodes[i]["deps"]
-        if word is None:
-            node1 = Node.Node('ROOT', i, 'ROOT')
-        else:
-            node1 = Node.Node(word, i, tag)
+        # if word is None:
+        #     node1 = Node.Node('ROOT', i, 'ROOT')
+        # else:
+        #     node1 = Node.Node(word, i, tag)
         if word is None:
             for dep_num in deps['ROOT']:
-                edges_set, edge_ind = update_edges_set(tree, dep_num,
-                                                       edges_set, edge_ind,
-                                                       node1)
+                # edges_set, edge_ind = update_edges_set(tree, dep_num,
+                #                                        edges_set, edge_ind,
+                #                                        tree.nodes[i])
+                edges_set[edge_ind] = Arc(dep_num, 0, i)
+                edge_ind += 1
         else:
             for dep_num in deps['']:
-                edges_set, edge_ind = update_edges_set(tree, dep_num,
-                                                       edges_set, edge_ind,
-                                                       node1)
+                # edges_set, edge_ind = update_edges_set(tree, dep_num,
+                #                                        edges_set, edge_ind,
+                #                                        tree.nodes[i])
+                edges_set[edge_ind] = Arc(dep_num, 0, i)
+                edge_ind += 1
     return edges_set
 
 
-def sum_features_edges(edges_set, sentence, feature_size):
+def sum_features_edges(tree, edges_set, sentence, feature_size):
+    # TODO REMOVE DICT
+    dict = {}
     edges_sum = dok_matrix((feature_size, 1))
-    for edge in edges_set:
-        edges_sum += feature_function(edge.origin_out_node,
-                                      edge.origin_in_node, sentence)
+    for ind in edges_set:
+        edge = edges_set[ind]
+        if edge.head in dict \
+                and dict[edge.head] == edge.tail:
+            continue
+        out_node = tree.nodes[edge.head]
+        in_node = tree.nodes[edge.tail]
+        edges_sum += feature_function(out_node, in_node, sentence)
+        dict[edge.head] = edge.tail
     return edges_sum
 
 
@@ -346,22 +283,25 @@ def test(teta):
     num_edges = 0
     num_right_edges = 0
     for tree in test_set:
-        sentence = create_sentence(tree)
-        mst_edges = calc_tree(teta, sentence)
+        mst_edges = calc_tree(teta, tree)
         right_edges = calc_right_tree(tree)
         num_edges += len(right_edges)
 
-        for right_edge in right_edges:
-            for mst_edge in mst_edges:
-                if (right_edge.origin_out_node.word ==
-                        mst_edge.origin_out_node.word) and (
-                            right_edge.origin_in_node.word ==
-                            mst_edge.origin_in_node.word):
+        # print("mst")
+        # for edge in mst_edges:
+        #     print(mst_edges[edge].head, mst_edges[edge].tail)
+
+        for i in right_edges:
+            for j in mst_edges:
+                right_edge = right_edges[i]
+                mst_edge = mst_edges[j]
+                if (right_edge.head == mst_edge.head) \
+                        and (right_edge.tail == mst_edge.tail):
                     num_right_edges += 1
-                    mst_edges.remove(mst_edge)
+                    # mst_edges.remove(mst_edge)
                     break
 
-    return 1 - (num_right_edges / num_edges)
+    return num_right_edges / num_edges
 
 
 # ----------------------------- part e ----------------------------------------
@@ -392,26 +332,26 @@ def main():
     global additional_features
     additional_features = True
 
+    # todo delete
+    start = time.time()
+    print("hello")
+
     # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)
 
+    end = time.time()
+    print("Training time:", end - start)
+
     # evaluation:
-    print("error", test(res))
+    print("Success:", test(res))
 
-    # =====
-    # sentence = create_sentence(training_set[70])
-    # nodes, edges = build_tree_from_sent(teta, sentence)
-    # print(nodes)
-    # print(edges)
-    # print(mst(nodes, edges))
+    end2 = time.time()
+    print("Evaluation time", end2 - end)
 
-    # for i in range(len(training_set)):
-    # print(training_set[70])
-    # print(i, len(training_set[i].nodes))
-
-
-
-    # print("from percepton ", res)
+    # shuffled_training = deepcopy(training_set[:5])
+    # print(shuffled_training)
+    # np.random.shuffle(shuffled_training)
+    # print(shuffled_training)
 
 
 if __name__ == '__main__':
