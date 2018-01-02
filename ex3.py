@@ -27,24 +27,7 @@ Arc = namedtuple('Arc', ('tail', 'weight', 'head'))
 
 
 # --------------------------- helper Functions --------------------------------
-def create_sentence(tree):
-    sentence = []
 
-    # for ROOT
-    # sentence.append(("ROOT", "ROOT"))
-
-    for i in range(1, len(tree.nodes)):
-        sentence.append((tree.nodes[i]["word"], tree.nodes[i]["tag"]))
-
-    return np.array(sentence)
-
-
-def find_in_sentence(sentence, value, word_or_tag=0):
-    options = []
-    for i, node in enumerate(sentence):
-        if node[word_or_tag] == value:
-            options.append(i)
-    return options
 
 
 # --------------------------- prepare data ------------------------------------
@@ -63,12 +46,12 @@ def set_dicts(corpus):
                 tags_dict[tag] = len(tags_dict)
 
 
-def feature_function(node1, node2, sentence):
+def feature_function(node1, node2):
     feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2
     if additional_features:
         feature_size = feature_size + 4
     feature_vec = dok_matrix((feature_size, 1))
-    word_feature_ind = -1
+    # word_feature_ind = -1
 
     if node1['word'] in words_dict:
         word1_ind = words_dict[node1['word']]
@@ -85,16 +68,12 @@ def feature_function(node1, node2, sentence):
                 tags_dict) + tag2_ind
             feature_vec[tag_feature_ind, 0] = 1
 
-    # TODO FIX FEATURES
     # part e:
     if additional_features:
-        # if word_feature_ind != -1:
         add1 = node1['address']
         add2 = node2['address']
         if (add2 - add1) < 4 and (add2-add1) > 0:
             feature_vec[-(5-add2-add1)] = 1
-        #     feature_vec = features_orders(feature_vec, sentence, node1.word,
-        #                                   node2.word, 0)
 
     return feature_vec
 
@@ -104,13 +83,12 @@ def feature_function(node1, node2, sentence):
 def build_tree_from_sent(teta, tree):
     # TODO minus?
     edges = []
-    sentence = create_sentence(tree)
     for i in range(1, len(tree.nodes)):
         node = tree.nodes[i]
-        weight = calc_score(tree.nodes[0], node, teta, sentence)
+        weight = calc_score(tree.nodes[0], node, teta)
         edges.append(Arc(i, weight, 0))
         for j in range(1, len(tree.nodes)):
-            weight = calc_score(tree.nodes[j], node, teta, sentence)
+            weight = calc_score(tree.nodes[j], node, teta)
             edges.append(Arc(i, weight, j))
     return edges
 
@@ -176,8 +154,8 @@ def spanning_arborescence(arcs, sink):
     return solution_arc_by_tail
 
 
-def calc_score(node1, node2, teta, sentence):
-    vec = feature_function(node1, node2, sentence)
+def calc_score(node1, node2, teta):
+    vec = feature_function(node1, node2)
     current_score = 0
     for item in vec.items():
         current_score += teta[item[0]]
@@ -191,27 +169,16 @@ def perceptron(feature_size, num_iter):
         feature_size = feature_size + 4
     curr_teta = dok_matrix((feature_size, 1))
     sum_teta = curr_teta
-    # shuffled_training = deepcopy(training_set[2000:4000])
-    shuffled_training = deepcopy(training_set[0:50])
+    shuffled_training = deepcopy(training_set[2000:4000])
+    # shuffled_training = deepcopy(training_set[0:50])
 
     for r in range(num_iter):
         np.random.shuffle(shuffled_training)
         for i, tree in enumerate(shuffled_training):
-            sentence = create_sentence(tree)
             mst_edges = calc_tree(curr_teta, tree)
             right_edges = calc_right_tree(tree)
-            # print("mst", i)
-            # for edge in mst_edges:
-            #     print(mst_edges[edge].head, mst_edges[edge].tail)
-
-            # print("right")
-            # for edge in right_edges:
-            #     print(right_edges[edge].head, right_edges[edge].tail)
-
-            sum_mst = -1 * sum_features_edges(tree, mst_edges, sentence,
-                                              feature_size)
-            sum_right = sum_features_edges(tree, right_edges, sentence,
-                                           feature_size)
+            sum_mst = -1 * sum_features_edges(tree, mst_edges, feature_size)
+            sum_right = sum_features_edges(tree, right_edges, feature_size)
             curr_teta += sum_mst + sum_right
             sum_teta += curr_teta
 
@@ -238,30 +205,19 @@ def calc_right_tree(tree):
     edge_ind = 0
     for i in tree.nodes:
         word = tree.nodes[i]["word"]
-        # tag = tree.nodes[i]["tag"]
         deps = tree.nodes[i]["deps"]
-        # if word is None:
-        #     node1 = Node.Node('ROOT', i, 'ROOT')
-        # else:
-        #     node1 = Node.Node(word, i, tag)
         if word is None:
             for dep_num in deps['ROOT']:
-                # edges_set, edge_ind = update_edges_set(tree, dep_num,
-                #                                        edges_set, edge_ind,
-                #                                        tree.nodes[i])
                 edges_set[edge_ind] = Arc(dep_num, 0, i)
                 edge_ind += 1
         else:
             for dep_num in deps['']:
-                # edges_set, edge_ind = update_edges_set(tree, dep_num,
-                #                                        edges_set, edge_ind,
-                #                                        tree.nodes[i])
                 edges_set[edge_ind] = Arc(dep_num, 0, i)
                 edge_ind += 1
     return edges_set
 
 
-def sum_features_edges(tree, edges_set, sentence, feature_size):
+def sum_features_edges(tree, edges_set, feature_size):
     # TODO REMOVE DICT
     dict = {}
     edges_sum = dok_matrix((feature_size, 1))
@@ -272,7 +228,7 @@ def sum_features_edges(tree, edges_set, sentence, feature_size):
             continue
         out_node = tree.nodes[edge.head]
         in_node = tree.nodes[edge.tail]
-        edges_sum += feature_function(out_node, in_node, sentence)
+        edges_sum += feature_function(out_node, in_node)
         dict[edge.head] = edge.tail
     return edges_sum
 
@@ -287,10 +243,6 @@ def test(teta):
         right_edges = calc_right_tree(tree)
         num_edges += len(right_edges)
 
-        # print("mst")
-        # for edge in mst_edges:
-        #     print(mst_edges[edge].head, mst_edges[edge].tail)
-
         for i in right_edges:
             for j in mst_edges:
                 right_edge = right_edges[i]
@@ -298,30 +250,9 @@ def test(teta):
                 if (right_edge.head == mst_edge.head) \
                         and (right_edge.tail == mst_edge.tail):
                     num_right_edges += 1
-                    # mst_edges.remove(mst_edge)
                     break
 
     return num_right_edges / num_edges
-
-
-# ----------------------------- part e ----------------------------------------
-
-def features_orders(feature_vec, sentence, word1, word2, ind):
-    ind_options = find_in_sentence(sentence, word1, word_or_tag=ind)
-    for word1_ind in ind_options:
-        if word1_ind < len(sentence) - 1 and sentence[
-                    word1_ind + 1, ind] == word2:
-            feature_vec[-4] = 1
-        elif word1_ind < len(sentence) - 2 and sentence[
-                    word1_ind + 2, ind] == word2:
-            feature_vec[-3] = 1
-        elif word1_ind < len(sentence) - 3 and sentence[
-                    word1_ind + 3, ind] == word2:
-            feature_vec[-2] = 1
-        elif word1_ind < len(sentence) - 4 and sentence[
-                    word1_ind + 4, ind] == word2:
-            feature_vec[-1] = 1
-    return feature_vec
 
 
 # ------------------------------ Main -----------------------------------------
@@ -331,6 +262,7 @@ def main():
     feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2
     global additional_features
     additional_features = True
+    # additional_features = False
 
     # todo delete
     start = time.time()
@@ -347,11 +279,6 @@ def main():
 
     end2 = time.time()
     print("Evaluation time", end2 - end)
-
-    # shuffled_training = deepcopy(training_set[:5])
-    # print(shuffled_training)
-    # np.random.shuffle(shuffled_training)
-    # print(shuffled_training)
 
 
 if __name__ == '__main__':

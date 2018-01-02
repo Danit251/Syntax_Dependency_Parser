@@ -8,8 +8,25 @@
 2000:4000 - 3313.6115033626556
 0:2000 - 6594.4402759075165 (error - 0.812896)
 
+0:50 - without additional
+Training time: 10.152152299880981
+Success: 0.19792349726775957
+Evaluation time 19.44804334640503
+
+0:50 - with additional
+Training time: 12.1491539478302
+Success: 0.27256830601092896
+Evaluation time 22.37861204147339
+
+0:500 - without additional
+Training time: 445.97590494155884
+Success: 0.2665573770491803
+Evaluation time 19.886814832687378
+
 
 2000:4000 - without additional
 Training time: 3204.5400006771088
 Success: 0.3040437158469945
 Evaluation time 18.04676365852356
+
+
