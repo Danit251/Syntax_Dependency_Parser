@@ -88,8 +88,9 @@ def build_tree_from_sent(teta, tree):
         weight = calc_score(tree.nodes[0], node, teta)
         edges.append(Arc(i, weight, 0))
         for j in range(1, len(tree.nodes)):
-            weight = calc_score(tree.nodes[j], node, teta)
-            edges.append(Arc(i, weight, j))
+            if j != i:
+                weight = calc_score(tree.nodes[j], node, teta)
+                edges.append(Arc(i, weight, j))
     return edges
 
 
@@ -169,8 +170,8 @@ def perceptron(feature_size, num_iter):
         feature_size = feature_size + 4
     curr_teta = dok_matrix((feature_size, 1))
     sum_teta = curr_teta
-    shuffled_training = deepcopy(training_set[2000:4000])
-    # shuffled_training = deepcopy(training_set[0:50])
+    # shuffled_training = deepcopy(training_set[0:4000])
+    shuffled_training = deepcopy(training_set[0:500])
 
     for r in range(num_iter):
         np.random.shuffle(shuffled_training)
@@ -266,7 +267,7 @@ def main():
 
     # todo delete
     start = time.time()
-    print("hello")
+    print("additional features:", additional_features)
 
     # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)

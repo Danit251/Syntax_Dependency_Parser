@@ -18,6 +18,16 @@ Training time: 12.1491539478302
 Success: 0.27256830601092896
 Evaluation time 22.37861204147339
 
+additional features: True
+Training time: 11.33862853050232
+Success: 0.29562841530054645
+Evaluation time 21.724518537521362
+
+additional features: True
+Training time: 11.546222448348999
+Success: 0.30153005464480875
+Evaluation time 21.420609951019287
+
 0:500 - without additional
 Training time: 445.97590494155884
 Success: 0.2665573770491803
@@ -29,4 +39,13 @@ Training time: 3204.5400006771088
 Success: 0.3040437158469945
 Evaluation time 18.04676365852356
 
+2000:4000 - with additional
+Training time: 4467.299448490143
+Success: 0.3853551912568306
+Evaluation time 37.57082223892212
 
+ALL!
+additional features: True
+Training time: 18873.718025684357
+Success: 0.4039344262295082
+Evaluation time 23.86132049560547
