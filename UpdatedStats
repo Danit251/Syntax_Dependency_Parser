@@ -1,0 +1,37 @@
+0:50
+
+additional features: False
+Training time: 14.658756256103516
+Success: 0.200327868852459
+Evaluation time 41.837579011917114
+
+additional features: True
+Training time: 18.596526622772217
+Success: 0.28775956284153004
+Evaluation time 33.94599914550781
+
+0:500
+
+additional features: False
+Training time: 824.8787047863007
+Success: 0.2689617486338798
+Evaluation time 38.419527769088745
+
+additional features: True
+Training time: 641.991527557373
+Success: 0.3548633879781421
+Evaluation time 31.185171842575073
+
+2000:4000
+
+additional features: True
+Training time: 4805.622693061829
+Success: 0.3850273224043716
+Evaluation time 23.407474517822266
+
+0:4000
+
+additional features: True
+Training time: 14109.502040147781
+Success: 0.39726775956284155
+Evaluation time 20.665100574493408

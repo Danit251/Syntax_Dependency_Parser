@@ -4,8 +4,6 @@ from nltk.corpus import dependency_treebank
 import numpy as np
 from scipy.sparse import dok_matrix
 from copy import deepcopy
-import Node
-import Edge
 import time
 
 corpus_sentences = dependency_treebank.parsed_sents()
@@ -26,12 +24,10 @@ additional_features = True
 Arc = namedtuple('Arc', ('tail', 'weight', 'head'))
 
 
-# --------------------------- helper Functions --------------------------------
-
-
-
-# --------------------------- prepare data ------------------------------------
+# ------------------------- Preparing data ------------------------------------
 def set_dicts(corpus):
+    """ Initialize dictionary for the words and tags's indexes in
+        the feature vector """
     global words_dict
     global tags_dict
     words_dict = {None: 0}
@@ -46,12 +42,18 @@ def set_dicts(corpus):
                 tags_dict[tag] = len(tags_dict)
 
 
+# --------------------------- Parts B & E -------------------------------------
+
 def feature_function(node1, node2):
+    """ Implementation for part b: feature function.
+        Calculating the places in the vector for a pair of nodes
+        by tags and words.
+        Part E: additional of features, calculating the numbers of words
+                between node1 and node2. """
     feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2
     if additional_features:
         feature_size = feature_size + 4
     feature_vec = dok_matrix((feature_size, 1))
-    # word_feature_ind = -1
 
     if node1['word'] in words_dict:
         word1_ind = words_dict[node1['word']]
@@ -72,29 +74,34 @@ def feature_function(node1, node2):
     if additional_features:
         add1 = node1['address']
         add2 = node2['address']
-        if (add2 - add1) < 4 and (add2-add1) > 0:
-            feature_vec[-(5-add2-add1)] = 1
+        if (add2 - add1) < 4 and (add2 - add1) > 0:
+            feature_vec[-(5 - add2 - add1)] = 1
 
     return feature_vec
 
 
 # ------------------------------- MST ----------------------------------------
 
-def build_tree_from_sent(teta, tree):
-    # TODO minus?
+def build_full_graph(teta, tree):
+    """ Creating a full graph to send for the MST.
+        For two pair of nodes in the tree, we will create
+        an edge between them with weight.
+        We take the opposite weight (-) in order to use the algorithm for
+        finding a maximal spanning tree."""
     edges = []
     for i in range(1, len(tree.nodes)):
         node = tree.nodes[i]
         weight = calc_score(tree.nodes[0], node, teta)
-        edges.append(Arc(i, weight, 0))
+        edges.append(Arc(i, -weight, 0))
         for j in range(1, len(tree.nodes)):
             if j != i:
                 weight = calc_score(tree.nodes[j], node, teta)
-                edges.append(Arc(i, weight, j))
+                edges.append(Arc(i, -weight, j))
     return edges
 
 
 def mst(arcs, sink):
+    """ Chu-Liu-Edmonds algorithm"""
     good_arcs = []
     quotient_map = {arc.tail: arc.tail for arc in arcs}
     quotient_map[sink] = sink
@@ -109,7 +116,7 @@ def mst(arcs, sink):
             if tail_rep == head_rep:
                 continue
             if tail_rep not in min_arc_by_tail_rep or min_arc_by_tail_rep[
-                tail_rep].weight < arc.weight:
+                tail_rep].weight > arc.weight:
                 min_arc_by_tail_rep[tail_rep] = arc
                 successor_rep[tail_rep] = head_rep
         cycle_reps = find_cycle(successor_rep, sink)
@@ -121,11 +128,12 @@ def mst(arcs, sink):
         cycle_rep_set = set(cycle_reps)
         cycle_rep = cycle_rep_set.pop()
         quotient_map = {
-            node: cycle_rep if node_rep in cycle_rep_set else node_rep for
-            node, node_rep in quotient_map.items()}
+        node: cycle_rep if node_rep in cycle_rep_set else node_rep for
+        node, node_rep in quotient_map.items()}
 
 
 def find_cycle(successor, sink):
+    """ Check if there's a cycle in it."""
     visited = {sink}
     for node in successor:
         cycle = []
@@ -139,6 +147,7 @@ def find_cycle(successor, sink):
 
 
 def spanning_arborescence(arcs, sink):
+    """ Calculating the maximum spanning tree. """
     arcs_by_head = defaultdict(list)
     for arc in arcs:
         if arc.tail == sink:
@@ -156,6 +165,8 @@ def spanning_arborescence(arcs, sink):
 
 
 def calc_score(node1, node2, teta):
+    """ Calculating the score of : teta * feature vec of a received pair of
+    nodes."""
     vec = feature_function(node1, node2)
     current_score = 0
     for item in vec.items():
@@ -166,12 +177,12 @@ def calc_score(node1, node2, teta):
 # ----------------------------- part c ----------------------------------------
 
 def perceptron(feature_size, num_iter):
+    """ Implementation for the Perceptron algorithm for training the model"""
     if additional_features:
         feature_size = feature_size + 4
     curr_teta = dok_matrix((feature_size, 1))
     sum_teta = curr_teta
-    # shuffled_training = deepcopy(training_set[0:4000])
-    shuffled_training = deepcopy(training_set[0:500])
+    shuffled_training = deepcopy(training_set)
 
     for r in range(num_iter):
         np.random.shuffle(shuffled_training)
@@ -190,18 +201,13 @@ def perceptron(feature_size, num_iter):
 
 # activate MST algorithm
 def calc_tree(teta, tree):
-    edges = build_tree_from_sent(teta, tree)
+    """ Calculating maximum spanning tree"""
+    edges = build_full_graph(teta, tree)
     return mst(edges, 0)
 
 
-def update_edges_set(tree, dep_num, edges_set, edge_ind, node1):
-    curr_edge = Arc(edge_ind, dep_num, node1['address'])
-    edges_set.add(curr_edge)
-    edge_ind += 1
-    return edges_set, edge_ind
-
-
 def calc_right_tree(tree):
+    """ Creating the edges for the right (labeled) right tree."""
     edges_set = {}
     edge_ind = 0
     for i in tree.nodes:
@@ -219,30 +225,34 @@ def calc_right_tree(tree):
 
 
 def sum_features_edges(tree, edges_set, feature_size):
-    # TODO REMOVE DICT
-    dict = {}
+    """ Calculating the sum of the feature function for all
+    the edges in the tree"""
     edges_sum = dok_matrix((feature_size, 1))
     for ind in edges_set:
         edge = edges_set[ind]
-        if edge.head in dict \
-                and dict[edge.head] == edge.tail:
-            continue
+        # if edge.head in dict \
+        #         and dict[edge.head] == edge.tail:
+        #     continue
         out_node = tree.nodes[edge.head]
         in_node = tree.nodes[edge.tail]
         edges_sum += feature_function(out_node, in_node)
-        dict[edge.head] = edge.tail
+        # dict[edge.head] = edge.tail
     return edges_sum
 
 
 # ----------------------------- part d ----------------------------------------
 
 def test(teta):
+    """ Testing the model created by the Perceptron algorithm using the test
+    set"""
     num_edges = 0
     num_right_edges = 0
+    words_num = 0
     for tree in test_set:
         mst_edges = calc_tree(teta, tree)
         right_edges = calc_right_tree(tree)
         num_edges += len(right_edges)
+        words_num += len(tree.nodes) - 1
 
         for i in right_edges:
             for j in mst_edges:
@@ -253,7 +263,7 @@ def test(teta):
                     num_right_edges += 1
                     break
 
-    return num_right_edges / num_edges
+    return num_right_edges / words_num
 
 
 # ------------------------------ Main -----------------------------------------
@@ -262,24 +272,14 @@ def main():
     set_dicts(training_set)
     feature_size = len(words_dict) ** 2 + len(tags_dict) ** 2
     global additional_features
-    additional_features = True
     # additional_features = False
-
-    # todo delete
-    start = time.time()
-    print("additional features:", additional_features)
+    additional_features = True
 
     # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)
 
-    end = time.time()
-    print("Training time:", end - start)
-
     # evaluation:
     print("Success:", test(res))
-
-    end2 = time.time()
-    print("Evaluation time", end2 - end)
 
 
 if __name__ == '__main__':
