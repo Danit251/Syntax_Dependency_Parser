@@ -74,7 +74,7 @@ def feature_function(node1, node2):
     if additional_features:
         add1 = node1['address']
         add2 = node2['address']
-        if (add2 - add1) < 4 and (add2 - add1) > 0:
+        if (add2 - add1) <= 4 and (add2 - add1) > 0:
             feature_vec[-(5 - add2 - add1)] = 1
 
     return feature_vec
@@ -230,13 +230,9 @@ def sum_features_edges(tree, edges_set, feature_size):
     edges_sum = dok_matrix((feature_size, 1))
     for ind in edges_set:
         edge = edges_set[ind]
-        # if edge.head in dict \
-        #         and dict[edge.head] == edge.tail:
-        #     continue
         out_node = tree.nodes[edge.head]
         in_node = tree.nodes[edge.tail]
         edges_sum += feature_function(out_node, in_node)
-        # dict[edge.head] = edge.tail
     return edges_sum
 
 
@@ -274,6 +270,8 @@ def main():
     global additional_features
     # additional_features = False
     additional_features = True
+
+    print("additional features:", additional_features)
 
     # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)
