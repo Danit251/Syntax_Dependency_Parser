@@ -182,7 +182,7 @@ def perceptron(feature_size, num_iter):
         feature_size = feature_size + 4
     curr_teta = dok_matrix((feature_size, 1))
     sum_teta = curr_teta
-    shuffled_training = deepcopy(training_set)
+    shuffled_training = deepcopy(training_set[2000:4000])
 
     for r in range(num_iter):
         np.random.shuffle(shuffled_training)
@@ -271,13 +271,21 @@ def main():
     # additional_features = False
     additional_features = True
 
+    # todo delete
+    start = time.time()
     print("additional features:", additional_features)
 
     # training:
     res = perceptron(feature_size, num_iter=NUM_ITER)
 
+    end = time.time()
+    print("Training time:", end - start)
+
     # evaluation:
     print("Success:", test(res))
+
+    end2 = time.time()
+    print("Evaluation time", end2 - end)
 
 
 if __name__ == '__main__':

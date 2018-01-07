@@ -37,13 +37,22 @@ Evaluation time 31.185171842575073
 
 == after change ==
 
-
+additional features: True
+Training time: 533.2432515621185
+Success: 0.35169398907103827
+Evaluation time 24.118306398391724
 
 0:1000
 
+additional features: False
 Training time: 2198.0366671085358
 Success: 0.2822950819672131
 Evaluation time 17.83967924118042
+
+additional features: True
+Training time: 1774.1017162799835
+Success: 0.36896174863387976
+Evaluation time 27.77889108657837
 
 2000:4000
 
